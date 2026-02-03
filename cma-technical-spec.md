@@ -28,7 +28,7 @@ Use this document to verify that CMA discussions, proposals, or implementations 
 3. **Expand** - Humans build on captured intelligence through systematic frameworks
 4. **Leverage** - AI leverages intelligence to inform asset generation while humans apply it for decision making, quality assurance, and contextual relevance
 5. **Codify** - Humans approve and validate intelligence that the system saves as institutional semantic intelligence
-6. **Return on Intelligence Achievement** - Individuals achieve enhanced cognitive capacity while organizations build systematic intelligence that amplifies everyone's capabilities
+6. **Amplify** - Individuals achieve enhanced cognitive capacity while organizations build systematic intelligence that amplifies everyone's capabilities (Return on Intelligence)
 
 **Three Foundational Sciences:**
 - **Marines Research** - Scientific validation that professional expertise is high-velocity pattern recognition operating optimally under Professional Intelligence Conditions: Environmental Regularity, Learning Opportunity, and Rapid Feedback. CMA extends this from individual expert learning to organizational intelligence accumulation.
@@ -443,7 +443,7 @@ Organizations become systematically smarter rather than just faster through enha
 ## Foundational Sciences
 
 ### Marines Research Foundation
-- **$3.85M Office of Naval Research study** proving "intuition" is high-velocity pattern recognition
+- **$3.85 million Office of Naval Research study** on "Enhancing Intuitive Decision Making Through Implicit Learning" proving "intuition" is high-velocity pattern recognition
 - **Professional Intelligence Conditions** for expert decision-making: Environmental Regularity, Learning Opportunity, Rapid Feedback
 - **Scientific justification** for professional expertise as measurable cognitive capability
 - **Empirical foundation** for why CMA's architecture creates optimal conditions for professional intelligence emergence

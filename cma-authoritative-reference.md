@@ -4,6 +4,8 @@
 
 **Sources:** CMA spec (content-data-architecture.md), Brightsy codebase, Storycycle record types (Supabase project `ukccbetnnemxjrqpamld`), and implementation planning.
 
+*Note: File paths below (e.g. `apps/web/...`, `packages/...`, `docs/features/...`) refer to the **Brightsy** codebase, not this repo.*
+
 ---
 
 ## 1. What We're Trying to Do
@@ -65,6 +67,8 @@ That's the **collective intelligence ecosystem**: content + metadata + strategic
 - **Tier 2** – Authoritative: full content, metadata, and (once added) relationship graph.
 - **Tier 3** – Retrieval: vector search over embeddings, optionally with coherence/quality filters.
 
+*Schema docs (e.g. Ultra-Intelligent Content semantic framework) may use a two-tier **core vs extended** data pattern within Tier 2 for optimal query performance.*
+
 ---
 
 ## 3. Data model: CMA spec vs Brightsy/Storycycle reality
@@ -86,7 +90,7 @@ That's the **collective intelligence ecosystem**: content + metadata + strategic
 
 ### 3.3 Storycycle today (on Brightsy)
 
-- **38 record types** – Foundation-like: Brand Story, Audience Story, ABT Statement, Persona, Content Marketing Strategy, Content Playbook, Social Media Strategy, Customer Journey, Narrative Arc. Derived: Content Asset, Social Media Post, Campaign, Content Enhancement, Website Content, Testimonial, etc. Operational: Email Campaigns, Email Subscribers, Webhook Events, Agent Metadata. See [STORYCYCLE_RECORD_TYPES_SUMMARY.md](STORYCYCLE_RECORD_TYPES_SUMMARY.md) for the full list and schema patterns.
+- **38 record types** – Foundation-like: Brand Story, Audience Story, ABT Statement, Persona, Content Marketing Strategy, Content Playbook, Social Media Strategy, Customer Journey, Narrative Arc. Derived: Content Asset, Social Media Post, Campaign, Content Enhancement, Website Content, Testimonial, etc. Operational: Email Campaigns, Email Subscribers, Webhook Events, Agent Metadata. See [storycycle-record-types-summary.md](storycycle-record-types-summary.md) for the full list and schema patterns.
 - **Strategic intelligence** – Shared `strategic_intelligence` object on many types: depth, risks, pivots, decisions, tradeoffs, captured_at, completeness, agent_context, user_insights, specialist_insights, etc. Content + metadata + this pattern live in `records.data` by convention.
 - **No record-to-record linkage** – All 38 schemas scanned; no has-one/has-many/recordType/foreignKey. Only cross-record "link" is **brand_name** (string). Foundation/related content is embedded (e.g. Brand Story's abt_statements, primary_audiences) or identified by brand name only.
 - **Content Asset sections** – Schema has `content_sections`, `intelligent_structure`, `compilation_metadata`, `abt_structure` inside JSONB. Section-aware structure exists in data; no separate `content_sections` table or section-level embeddings.

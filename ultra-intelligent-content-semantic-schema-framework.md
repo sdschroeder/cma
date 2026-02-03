@@ -17,6 +17,8 @@
 - Detailed adaptation rules and coordination protocols  
 - Linked to Tier 1 via efficient reference keys
 
+*Note: This two-tier schema (Core / Extended) is a **data/schema** pattern used within **Tier 2 (Intelligence Storage)** of CMA's **system** architecture. CMA's system architecture remains three-tier: Memory → Intelligence Storage → Semantic (Cohere + pgvector).*
+
 **Performance Optimization Questions**:
 - What is Brightsy's maximum recommended JSON nesting depth?
 - How do complex queries perform against deeply nested structures?

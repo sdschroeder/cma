@@ -39,7 +39,7 @@ The key insight: this flywheel requires Ultra-Intelligent Content as the foundat
 
 Cognitive Mesh Architecture builds on three validated research domains that prove professional expertise is measurable and amplifiable through coordinated multi-agent systems:
 
-### Military Cognitive Research: Professional Intelligence Validation
+### Marines Research: Professional Intelligence Validation
 
 The breakthrough research that shaped my thinking: the $3.85 million Office of Naval Research study on "Enhancing Intuitive Decision Making Through Implicit Learning," General Charles C. Krulak's Marine Corps Gazette work on cultivating decision-making, and Gary Klein's Recognition-Primed Decision model all proving "intuition" is actually high-velocity pattern recognition operating under specific **Professional Intelligence Conditions**:
 
@@ -55,7 +55,7 @@ Evidence-based principles for identifying cognitive barriers and designing inter
 
 ### Flow State Research: Optimal Performance Conditions
 
-Mihaly Csikszentmihalyi's research on peak cognitive performance: clear goals, immediate feedback, and challenge-skill balance. These conditions align perfectly with the Military Cognitive Research findings, explaining why expert pattern recognition works under specific cognitive circumstances.
+Mihaly Csikszentmihalyi's research on peak cognitive performance: clear goals, immediate feedback, and challenge-skill balance. These conditions align perfectly with the Marines Research findings, explaining why expert pattern recognition works under specific cognitive circumstances.
 
 **The Integration**: CMA synthesizes these three research domains to create systematic cognitive infrastructure that optimizes conditions for professional intelligence emergence and amplification through coordinated multi-agent systems.
 
@@ -143,14 +143,22 @@ Traditional UX optimizes for task completion speed. **CMA requires UX design tha
 
 **Strategic Memory Utilization**: Dynamic intelligence facilitation through strategic memory governance - lightweight, flexible support that enables effective use of Ultra-Intelligent Content through quick retrieval of context and application preferences.
 
-#### **Semantic Intelligence Enhancement Through Strategic Coherence Scoring**
+#### **Semantic Intelligence Enhancement Through Strategic Asset Score**
 
-A critical component of the Collective Intelligence Ecosystem is our method for enhancing semantic intelligence through strategic coherence scoring. This systematic approach transforms content discovery from recency-based assumptions to intelligence-based prioritization:
+A critical component of the Collective Intelligence Ecosystem is our method for enhancing semantic intelligence through strategic coherence scoring. This systematic approach transforms content discovery from recency-based assumptions to intelligence-based prioritization. Scoring is implemented as a **Strategic Asset Score** record (per asset) with the following component weights:
 
-**Strategic Coherence Scoring Framework**:
-- **Foundation Asset Alignment (40%)**: Prioritizes content that aligns with brand story coherence, audience targeting, and strategic frameworks
-- **Cross-Asset Intelligence (35%)**: Rewards content with strong reference networks and strategic context preservation
-- **Content Quality & Sophistication (25%)**: Recognizes professional intelligence density and implementation readiness
+**Strategic Asset Score – Component Weights**:
+- **brand_story_coherence** (15%): Alignment with brand story and strategic positioning
+- **audience_story_alignment** (15%): Alignment with audience targeting and narrative
+- **narrative_structure_quality** (10%): Quality of narrative and ABT structure
+- **reference_network_strength** (20%): Strength of connections to foundational and related assets
+- **content_playbook_compliance** (10%): Alignment with content playbook and strategic frameworks
+- **professional_intelligence_density** (10%): Density of professional expertise and domain knowledge
+- **strategic_context_preservation** (5%): Preservation of strategic reasoning and context
+- **validation_status_score** (10%): Validation status and quality assurance
+- **implementation_readiness** (5%): Readiness for deployment and reuse
+
+*Total score (0–100) and score_tier (e.g. "High Strategic Value", "Good Strategic Alignment") are derived from these components.*
 
 **Analytics-Enhanced Feedback Loop**: Traditional analytics (engagement rates, usage patterns, business outcomes) provide feedback that enhances semantic intelligence by:
 
@@ -279,7 +287,7 @@ We're testing CMA principles through StoryCycle Genie's multi-agent architecture
 
 **Semantic Intelligence Enhancement**: Strategic coherence scoring method that prioritizes foundational intelligence and creates compound network effects through systematic pattern recognition, validated and improved through performance analytics feedback.
 
-**UX Design as Core Infrastructure**: Flow-optimized interface design that creates cognitive conditions specified by Military Cognitive Research, Behavioral Design, and Flow State Research for professional intelligence emergence across multi-agent interactions.
+**UX Design as Core Infrastructure**: Flow-optimized interface design that creates cognitive conditions specified by Marines Research, Behavioral Design, and Flow State Research for professional intelligence emergence across multi-agent interactions.
 
 **Dynamic Intelligence Facilitation**: Memory systems provide lightweight, flexible support that enables effective application of foundational Ultra-Intelligent Content.
 
@@ -373,7 +381,7 @@ CMA represents the systematic approach to preserving and amplifying human expert
 
 Cognitive Mesh Architecture represents a fundamental shift from AI systems that optimize for efficiency to multi-agent AI collaboration that amplifies human intelligence. Building on the intelligent content foundations established by Ann Rockley, Scott Abel, and advanced by Renee Topper's Content OS work, CMA extends content intelligence into cognitive intelligence - preserving not just content structure but the strategic reasoning and professional expertise that created it.
 
-Through systematic integration of Military Cognitive Research, Behavioral Design, Flow State Research, and Ultra-Intelligent Content as the foundational intelligence via coordinated agent specialization, CMA enables organizations to achieve measurable Return on Intelligence that transcends operational efficiency to create sustainable competitive advantages. Our strategic coherence scoring method further enhances this by ensuring semantic intelligence compounds through systematic pattern recognition and network amplification, validated and improved through performance analytics feedback.
+Through systematic integration of Marines Research, Behavioral Design, Flow State Research, and Ultra-Intelligent Content as the foundational intelligence via coordinated agent specialization, CMA enables organizations to achieve measurable Return on Intelligence that transcends operational efficiency to create sustainable competitive advantages. Our strategic coherence scoring method further enhances this by ensuring semantic intelligence compounds through systematic pattern recognition and network amplification, validated and improved through performance analytics feedback.
 
 We're in the early stages of validating this approach through StoryCycle Genie's multi-agent implementation, but the initial results suggest that organizations implementing complete CMA frameworks can establish enhanced cognitive capabilities that strengthen organizational mission fulfillment over time through foundational intelligence accumulation and coordinated multi-agent architecture.
 

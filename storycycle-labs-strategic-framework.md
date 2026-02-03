@@ -110,10 +110,10 @@ Sean's breakthrough in systematic flow thinking came through months of brand sto
 **ROI (Return on Intelligence) Connection:** Professional expertise represents measurable intelligence assets that compound organizational advantage
 
 #### Core Scientific Insight
-$3.85M military study proving "intuition" is high-velocity pattern recognition based on accumulated data—representing ROI (Return on Intelligence) through systematic expertise amplification across knowledge work domains, not just individual efficiency gains.
+$3.85 million Office of Naval Research study ("Enhancing Intuitive Decision Making Through Implicit Learning") proving "intuition" is high-velocity pattern recognition based on accumulated data—representing ROI (Return on Intelligence) through systematic expertise amplification across knowledge work domains, not just individual efficiency gains.
 
 #### The Research Foundation
-- **$3.85 million Office of Naval Research study** on "Improving Intuitive Decision Making Through Implicit Learning"
+- **$3.85 million Office of Naval Research study** on "Enhancing Intuitive Decision Making Through Implicit Learning"
 - **Led by Dr. Peter Squire** involving Northwestern University, UCLA, and MIT
 - **General Charles C. Krulak's 1999 article** "Cultivating Intuitive Decisionmaking" in Marine Corps Gazette
 - **Gary Klein's Recognition-Primed Decision (RPD) model** validating expert pattern recognition
