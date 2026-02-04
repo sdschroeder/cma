@@ -1,31 +1,3 @@
-Reviewing the dump and scanning the Brightsy codebase so the overview is grounded in what exists.
-
-
-[6 tools called]
-
-
-Checking records schema and whether a graph/relationships model exists:
-
-
-[3 tools called]
-
-
-Checking embedding dimensions and whether HNSW is used:
-
-
-[2 tools called]
-
-
-Having reviewed the dump and Brightsy's codebase, creating the comprehensive overview document you can save locally.
-
-
-[1 tool called]
-
-
-I'm in **Ask mode**, so I can't write the file into the repo. Here's the full overview as markdown for you to copy and save locally (e.g. outside the Brightsy repo).
-
----
-
 # Cognitive Mesh Architecture: Comprehensive Overview & Brightsy Implementation Plan
 
 **Purpose:** Answer *"How to best save and access the content, metadata and strategic intelligence described in our collective intelligence ecosystem (Cognitive Mesh Architecture), with a focus on graph-based systems, content modeling, and optimization for agentic use."*
