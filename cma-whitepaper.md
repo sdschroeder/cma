@@ -111,9 +111,14 @@ Cognitive Mesh Architecture builds on the foundational intelligent content work 
 While traditional intelligent content focuses on **content modularity and operational efficiency**, Ultra-Intelligent Content preserves the **strategic reasoning and professional intelligence** that created the content. This enables:
 
 - **Cognitive Intelligence Preservation**: Not just content structure, but the strategic thinking and professional frameworks behind content decisions
+- **Capture at Creation**: Every content save automatically includes semantic metadata (`ultra_intelligent_metadata`) and extractable components (`atomic_components`) that preserve strategic intelligence
+- **Adaptive Recomposition**: Content automatically transforms across formats (blog → social → presentations) through multi-agent coordination while preserving strategic meaning
 - **Multi-Agent Coordination**: Specialized agents that can reason about strategic intelligence rather than just manipulate content components
 - **Intelligence Amplification**: Every content interaction builds institutional intelligence that creates compound organizational advantages
+- **Lineage Tracking**: Content records track source assets and adaptation history, enabling compound intelligence across the content ecosystem
 - **Cognitive Flow Optimization**: Content systems designed around professional intelligence conditions rather than just workflow efficiency
+
+**Technical Foundation**: Ultra-Intelligent Content is realized through a **content record contract** and **governance-first schema** baked into the base framework. This ensures every agent enforces the same data structure—semantic metadata, atomic components, and lineage fields—by design rather than as an afterthought. See the [CMA Technical Specification](cma-technical-spec.md) for detailed schema definitions.
 
 **Strategic Positioning**: CMA represents the next evolutionary stage beyond operational content intelligence - advancing from "content as infrastructure" to "content as cognitive infrastructure" that amplifies organizational intelligence.
 
@@ -152,6 +157,8 @@ Traditional UX optimizes for task completion speed. **CMA requires UX design tha
 
 **What This Means**: Your organization develops consistent approaches to AI collaboration that reduce cognitive load while maintaining professional quality standards across all specialized agents in the system.
 
+**Governance-First Principle**: Schema and data architecture are part of Framework Governance. The **content record contract** (semantic metadata, atomic components, lineage), **selective retrieval profiles**, and **validation gates** are baked into the base framework so every agent enforces the same data structure by design.
+
 **Organizational Impact**: Teams spend less mental energy navigating systems and more energy on strategic thinking and professional judgment.
 
 ### Pillar 2: Collective Intelligence Ecosystem
@@ -159,6 +166,8 @@ Traditional UX optimizes for task completion speed. **CMA requires UX design tha
 **Purpose**: Builds on accumulated professional experience through systematic intelligence preservation and amplification across the agent mesh
 
 **What This Means**: Your organization's professional expertise gets captured in Ultra-Intelligent Content (Structured Intelligence Assets) that serves as the foundation of all collective intelligence, enabling access, building upon, and adaptation across formats while preserving strategic meaning through specialized agents working together.
+
+**Three-Tier Architecture**: CMA organizes intelligence across three tiers: (1) **Memory layer** for lightweight context, pointers, and preferences; (2) **Intelligence storage** for full assets, lineage, and relationships; (3) **Semantic layer** for embeddings and meaning-based retrieval. This separation enables fast context loading while preserving comprehensive intelligence.
 
 **Three Integrated Components**:
 
@@ -214,6 +223,7 @@ A critical component of the Collective Intelligence Ecosystem is our method for 
 - **Behind-the-Scenes Agent Collaboration**: Specialized agents coordinate without user interruption
 - **Cross-Agent Context Preservation**: Information flows seamlessly between agents in the mesh
 - **Cognitive Flow Facilitation**: Agent coordination designed to avoid breaking thinking rhythm
+- **Adaptive Recomposition**: Four-step flow (Context Analysis → Component Selection → Semantic Recombination → Quality Assurance) enables content to transform across formats while preserving strategic meaning
 
 **Dynamic Intelligence Facilitation**: Memory systems provide quick context retrieval that enables agents to apply Ultra-Intelligent Content appropriately without cognitive overhead.
 
@@ -239,7 +249,7 @@ A critical component of the Collective Intelligence Ecosystem is our method for 
 
 **Traditional Content OS Approach**: Modular content components that humans mix and match for different channels and contexts
 
-**StoryCycle Genie CMA Implementation**: Coordinated multi-agent system where specialized agents autonomously adapt content while preserving strategic coherence and building organizational intelligence
+**StoryCycle Genie V2 Architecture**: **One Content Creation Orchestrator + on-demand skills** replaces standalone content agents, with specialists (Narrative, Behavioral, Search, Archetype, Intelligence) invoked as needed. This governance-first model reduces token usage by 80–85% while delivering the full Ultra-Intelligent Content vision.
 
 ### Four-Phase Intelligence Evolution
 
@@ -252,12 +262,14 @@ A critical component of the Collective Intelligence Ecosystem is our method for 
 - **Social Media Strategy Genie™**: Synthesizes core intelligence into coordinated multi-channel strategic frameworks
 - **Campaign Architect Genie™**: Develops integrated campaigns with comprehensive strategic coordination
 - **Customer Journey Genie™**: Maps systematic intelligence application across customer touchpoints
+- Complex strategic agents use **Brightsy Plans** for multi-phase workflows with checkpoint recovery
 
 **Phase 3: Content Creation** (Semantic Intelligence)
-- **20+ Specialized Content Agents**: Blog Post, Email, Social Media, Web Copy, Landing Page, Case Study, Video Script, Sales Presentation, Product Description, and other content genies
-- **Ultra-Intelligent Content Generation**: Each piece preserves strategic context, professional frameworks, and enables adaptive recomposition while maintaining strategic coherence
-- **Autonomous Agent Coordination**: Specialized agents collaborate behind the scenes to maintain brand consistency and strategic alignment
-- **Performance Analytics Integration**: Traditional analytics (engagement, conversions, business outcomes) provide feedback that validates strategic coherence scoring and enhances future semantic intelligence
+- **Content Creation Orchestrator + Content-Type Skills**: Unified orchestrator loads context-appropriate skills (blog-post, email, video, longform, etc.) rather than separate agents for each content type
+- **Capture at Creation**: Every content save includes `ultra_intelligent_metadata` and `atomic_components` via governance-enforced schema
+- **Specialist Delegation**: Orchestrator invokes Narrative, Behavioral, Search specialists as needed while maintaining cognitive flow
+- **Recomposition Capability**: Existing content can be transformed across formats (blog → social series) using stored atomic components
+- **Performance Analytics Integration**: Analytics feedback validates strategic coherence scoring and enhances semantic intelligence
 
 **Phase 4: Enhancement & Optimization** (Validated Example Leverage → Domain Expertise Emergence)
 - **Behavioral Messaging Genie™**: Applies behavioral science principles for ethical engagement enhancement
@@ -265,16 +277,17 @@ A critical component of the Collective Intelligence Ecosystem is our method for 
 - **Search Optimization Genie™**: Optimizes discoverability while maintaining authentic voice and strategic value
 - **Brand Intelligence Genie™**: Provides competitive landscape analysis for strategic differentiation
 - **Analytics-Driven Refinement**: Performance data feeds back into strategic coherence scoring to improve future intelligence prioritization
+- **Lineage and Recomposition**: Content records track source assets (`derived_from_assets`) and adaptation history for compound intelligence
 
 ### CMA Principles Demonstrated
 
-**Framework Governance**: Story Cycle System™ methodology creates Environmental Regularity across all specialized agents
+**Framework Governance**: Story Cycle System™ methodology creates Environmental Regularity; **governance-first schema** (content record contract, selective retrieval profiles, validation gate) is baked into base framework and skills so every agent enforces the same data structure
 
-**Collective Intelligence Ecosystem**: Ultra-Intelligent Content foundation where brand stories, audience insights, and strategic frameworks compound over time, with agents autonomously building on accumulated organizational intelligence enhanced by strategic coherence scoring and validated through performance analytics
+**Collective Intelligence Ecosystem**: Ultra-Intelligent Content foundation where brand stories, audience insights, and strategic frameworks compound over time, with orchestrator + skills building on accumulated organizational intelligence enhanced by strategic coherence scoring and validated through performance analytics
 
-**Intelligent Orchestration**: Seamless agent coordination (Brand Story → Audience Story → Content Creation → Optimization) while preserving cognitive flow and strategic context
+**Intelligent Orchestration**: Seamless coordination via Content Creation Orchestrator with specialist delegation; recomposition flow (Context Analysis → Component Selection → Semantic Recombination → QA) enables adaptive content transformation while preserving cognitive flow
 
-**Embedded Intelligence Architecture**: Each specialized agent contains domain expertise and operates at expert level immediately, creating "It's like having a CMO that spent 6 months learning our company" experience
+**Embedded Intelligence Architecture**: Orchestrator and specialists contain domain expertise and operate at expert level immediately, creating "It's like having a CMO that spent 6 months learning our company" experience
 
 ### The Intelligence Amplification Difference
 
@@ -344,15 +357,19 @@ We're testing CMA principles through StoryCycle Genie's multi-agent architecture
 
 **All Four Pillars Required**: Complete CMA implementation requires all components working together through coordinated multi-agent architecture.
 
-**Ultra-Intelligent Content as Foundation**: Structured Intelligence Assets provide the core intelligence that enables all other CMA capabilities, with coordinated agent collaboration accessing and enhancing this foundational intelligence.
+**Governance-First Schema and Data Architecture**: Define schema and data architecture (UIC content schema, lineage, memory conventions) before or alongside pillar implementation. Bake the **content record contract** into the base framework so every agent enforces the same structure. See [CMA Technical Specification](cma-technical-spec.md) for detailed requirements.
+
+**Ultra-Intelligent Content as Foundation**: Structured Intelligence Assets with capture at creation (`ultra_intelligent_metadata`, `atomic_components`) provide the core intelligence that enables all other CMA capabilities, with coordinated agent collaboration accessing and enhancing this foundational intelligence.
+
+**Selective Retrieval**: Governance-approved field profiles per asset type reduce cognitive and token load while ensuring agents access essential intelligence.
 
 **Semantic Intelligence Enhancement**: Strategic coherence scoring method that prioritizes foundational intelligence and creates compound network effects through systematic pattern recognition, validated and improved through performance analytics feedback.
 
 **UX Design as Core Infrastructure**: Flow-optimized interface design that creates cognitive conditions specified by Marines Research, Behavioral Design, and Flow State Research for professional intelligence emergence across multi-agent interactions.
 
-**Dynamic Intelligence Facilitation**: Memory systems provide lightweight, flexible support that enables effective application of foundational Ultra-Intelligent Content.
+**Dynamic Intelligence Facilitation**: Memory systems provide lightweight, flexible support that enables effective application of foundational Ultra-Intelligent Content through three-tier architecture (memory → intelligence storage → semantic).
 
-**Multi-Agent Architecture**: Specialized agents rather than hardcoded systems, enabling continuous improvement through agent evolution while maintaining intelligence amplification principles across the coordinated mesh.
+**Multi-Agent Architecture**: Orchestrator + skills model with specialist delegation rather than standalone agents, enabling continuous improvement through agent evolution while maintaining intelligence amplification principles across the coordinated mesh.
 
 **Analytics Feedback Integration**: Performance analytics create feedback loops that validate strategic coherence scoring predictions and enhance future semantic intelligence development.
 
@@ -432,6 +449,8 @@ CMA represents the systematic approach to preserving and amplifying human expert
 
 **Framework Review**: Examine complete technical specification for detailed understanding of CMA principles and multi-agent architecture requirements
 
+**Schema and Governance**: Review [CMA Technical Specification](cma-technical-spec.md) and UIC schema documentation for content record contract, selective retrieval profiles, and governance-first implementation patterns
+
 **ROI Projection**: Consider potential Return on Intelligence through foundational Ultra-Intelligent Content and systematic cognitive capacity enhancement
 
 **Implementation Pathway**: Develop phased approach to CMA implementation focused on Ultra-Intelligent Content foundation building and semantic intelligence enhancement
@@ -442,9 +461,9 @@ CMA represents the systematic approach to preserving and amplifying human expert
 
 Cognitive Mesh Architecture represents a fundamental shift from AI systems that optimize for efficiency to multi-agent AI collaboration that amplifies human intelligence. Building on the intelligent content foundations established by Ann Rockley, Scott Abel, and advanced by Renee Topper's Content OS work, CMA extends content intelligence into cognitive intelligence - preserving not just content structure but the strategic reasoning and professional expertise that created it.
 
-Through systematic integration of Marines Research, Behavioral Design, Flow State Research, and Ultra-Intelligent Content as the foundational intelligence via coordinated agent specialization, CMA enables organizations to achieve measurable Return on Intelligence that transcends operational efficiency to create sustainable competitive advantages. Our strategic coherence scoring method further enhances this by ensuring semantic intelligence compounds through systematic pattern recognition and network amplification, validated and improved through performance analytics feedback.
+Through systematic integration of Marines Research, Behavioral Design, Flow State Research, and Ultra-Intelligent Content as the foundational intelligence via coordinated agent specialization, CMA enables organizations to achieve measurable Return on Intelligence that transcends operational efficiency to create sustainable competitive advantages. Ultra-Intelligent Content with **capture at creation** and **adaptive recomposition** ensures every content interaction builds compound organizational intelligence. Our strategic coherence scoring method further enhances this by ensuring semantic intelligence compounds through systematic pattern recognition and network amplification, validated and improved through performance analytics feedback.
 
-We're in the early stages of validating this approach through StoryCycle Genie's multi-agent implementation, but the initial results suggest that organizations implementing complete CMA frameworks can establish enhanced cognitive capabilities that strengthen organizational mission fulfillment over time through foundational intelligence accumulation and coordinated multi-agent architecture.
+We're in the early stages of validating this approach through StoryCycle Genie's V2 architecture (orchestrator + skills model), where the initial results suggest that organizations implementing complete CMA frameworks can establish enhanced cognitive capabilities that strengthen organizational mission fulfillment over time through foundational intelligence accumulation and coordinated multi-agent architecture.
 
 **The question isn't whether your organization will adopt AI collaboration—it's whether you'll implement systems that amplify human intelligence or accidentally diminish it.** Cognitive Mesh Architecture provides the framework for ensuring multi-agent AI collaboration enhances rather than replaces the professional intelligence that drives genuine innovation and organizational success through foundational Ultra-Intelligent Content and systematic cognitive enhancement.
 
@@ -452,8 +471,17 @@ We're in the early stages of validating this approach through StoryCycle Genie's
 
 ---
 
-*Sean Schroeder is the creator of Cognitive Mesh Architecture and co-founder of Reventure Labs, StoryCycle Labs, and Happy Ladders, where CMA principles are being tested and refined through the StoryCycle Genie platform.*
+*Sean Schroeder is the creator of Cognitive Mesh Architecture and co-founder of Reventure Labs and StoryCycle Labs, where CMA principles are being tested and refined through the StoryCycle Genie platform.*
 
 *Cognitive Mesh Architecture was developed and implemented on Brightsy, the Collective Intelligence Platform.*
 
 *Ultra-Intelligent Content builds upon foundational intelligent content research by Ann Rockley, Scott Abel (The Content Wrangler), and Renee Topper's Content OS framework, advancing from content operations efficiency to cognitive intelligence amplification.*
+
+---
+
+## Related Documentation
+
+- [CMA Technical Specification](cma-technical-spec.md) — Complete technical definition, system architecture, UIC schema, implementation requirements
+- [StoryCycle Genie V2 Architecture](storycycle-genie-v2-executable-vision.md) — Reference implementation details, governance-first approach, phase breakdown
+- [Ultra-Intelligent Content](ultra-intelligent-content.md) — UIC definition, phases, and multi-agent recomposition
+- [Content Data Architecture](content-data-architecture.md) — Three-tier architecture, data model, Brightsy implementation
