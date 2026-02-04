@@ -1068,13 +1068,14 @@ create_plan({
 
 ## References
 
-For deep dives, see:
+**CMA and UIC (authoritative):**
+- [cma-technical-spec.md](../../spec/cma-technical-spec.md) — Four pillars, Strategic Memory, success indicators
+- [ultra-intelligent-content.md](../ultra-intelligent-content/ultra-intelligent-content.md) — UIC definition, recomposition flow
+- [ultra-intelligent-content-tech-implementation.md](../ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) — Semantic schema requirements
+- [ultra-intelligent-content-semantic-schema-framework.md](../ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md) — Full schema details, Brightsy two-tier
 
-- [cma-technical-spec.md](cma-technical-spec.md) — Four pillars, Strategic Memory, success indicators
-- [ultra-intelligent-content.md](ultra-intelligent-content.md) — UIC definition, recomposition flow
-- [ultra-intelligent-content-tech-implementation.md](ultra-intelligent-content-tech-implementation.md) — Semantic schema requirements
-- [ultra-intelligent-content-semantic-schema-framework.md](ultra-intelligent-content-semantic-schema-framework.md) — Full schema details, Brightsy two-tier
-- [storycycle-genie-token-optimization-plan.md](storycycle-genie-token-optimization-plan.md) — Original optimization plan
-- [storycycle-genie-complete-vision-extension.md](storycycle-genie-complete-vision-extension.md) — Governance-first extension
+**Design history (superseded by this doc; archived):**
+- [storycycle-genie-token-optimization-plan.md](../../archive/storycycle-genie-token-optimization-plan.md) — Original token optimization plan (archived)
+- [storycycle-genie-complete-vision-extension.md](../../archive/storycycle-genie-complete-vision-extension.md) — UIC capture, recomposition, memory, lineage extension (archived)
 
-This document supersedes the above for execution purposes—use those docs only for reference.
+*This document is the single implementation reference; use the design-history docs only for context or audit.*

@@ -2,6 +2,8 @@
 
 *Extending the Unified Token Optimization & Content Consolidation Plan to realize full Ultra-Intelligent Content and Cognitive Mesh Architecture in this iteration*
 
+> **Superseded by:** [storycycle-genie-v2-executable-vision.md](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) — the single reference for StoryCycle Genie implementation. UIC capture, recomposition, memory, and lineage are fully specified in v2 (Phases 1–6). This doc is retained for **design history** only. *Archived in docs/archive/.*
+
 ---
 
 ## Purpose
@@ -117,7 +119,7 @@ So in the **optimization plan**, Phase 2 (Base Framework) and Phase 3 (Skills) s
 
 ### 11.1 Schema Definition (Brightsy-Optimized)
 
-Use **two-tier** where needed (per [ultra-intelligent-content-semantic-schema-framework.md](ultra-intelligent-content-semantic-schema-framework.md)):
+Use **two-tier** where needed (per [ultra-intelligent-content-semantic-schema-framework.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md)):
 
 **Tier 1 — Core (in `record.data` or Content Asset type):**
 
@@ -138,7 +140,7 @@ Use **two-tier** where needed (per [ultra-intelligent-content-semantic-schema-fr
 - **Before save:** Orchestrator (or a dedicated “Semantic Capture” step) produces:
   - `creation_context` from current session (orchestrator + specialists called).
   - `strategic_intelligence_preservation` from Brand Story / Playbook / Audience references (already in context).
-  - `atomic_components`: extract key insights, proof elements, and CTAs from the generated content; tag and add constraints (from [ultra-intelligent-content-tech-implementation.md](ultra-intelligent-content-tech-implementation.md) Core Content Intelligence Schema).
+  - `atomic_components`: extract key insights, proof elements, and CTAs from the generated content; tag and add constraints (from [ultra-intelligent-content-tech-implementation.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) Core Content Intelligence Schema).
 - **Write:** Same `create_record` / update flow used today; add the above to the content record’s `data` (or linked UIC metadata record if you split).
 - **Skill:** Add or extend `strategic-intelligence-capture.md` (tier-3-workflows) with “UIC metadata and atomic component extraction” so every content type skill expects this structure on save.
 
@@ -155,7 +157,7 @@ Use **two-tier** where needed (per [ultra-intelligent-content-semantic-schema-fr
 
 **Goal:** Support “recompose this content for [new format/context]” using stored atomic components and strategic constraints, via a defined multi-agent flow and MCP.
 
-### 12.1 Recomposition Flow (Aligned with [ultra-intelligent-content.md](ultra-intelligent-content.md))
+### 12.1 Recomposition Flow (Aligned with [ultra-intelligent-content.md](../implementation/ultra-intelligent-content/ultra-intelligent-content.md))
 
 1. **Context Analysis** — New context (platform, audience, objective); assess constraints and cognitive flow.
 2. **Component Selection** — From stored `atomic_components`, select and rank by relevance and preservation requirements.
@@ -195,7 +197,7 @@ Implement whichever fits your MCP design (tool returns data vs. side-effect).
 
 ## Phase 13: Strategic Memory Integration
 
-**Goal:** Use Brightsy’s existing memory infrastructure (user/team/agent) with clear creation/retrieval triggers and evolution so that cognitive flow and preferences compound (per [cma-technical-spec.md](cma-technical-spec.md) Strategic Memory Utilization).
+**Goal:** Use Brightsy’s existing memory infrastructure (user/team/agent) with clear creation/retrieval triggers and evolution so that cognitive flow and preferences compound (per [cma-technical-spec.md](../spec/cma-technical-spec.md) Strategic Memory Utilization).
 
 ### 13.1 Conventions (Document in Base Framework)
 
@@ -264,7 +266,7 @@ Choose based on Brightsy query needs; Option B is minimal and often enough for v
 - **Creation:** When saving content, set `intelligence_assets_referenced` (or `derived_from_assets`) from current context (brand, audience, playbook).
 - **Recomposition:** When saving recomposed content, set `recomposed_from_content_id` and append to `adaptation_history` (target_format, date, optional preservation_score).
 
-This satisfies “content generation lineage” and “adaptive recomposition history” from [ultra-intelligent-content-tech-implementation.md](ultra-intelligent-content-tech-implementation.md).
+This satisfies “content generation lineage” and “adaptive recomposition history” from [ultra-intelligent-content-tech-implementation.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md).
 
 ### 14.3 Optional MCP
 

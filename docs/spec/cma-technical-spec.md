@@ -4,15 +4,17 @@
 
 ## How to Use This Document
 
-This document serves as the **technical reference** for all Cognitive Mesh Architecture concepts, implementations, and discussions.
+This document serves as the **technical reference** for all Cognitive Mesh Architecture concepts, implementations, and discussions—including **Ultra-Intelligent Content (UIC)**. All UIC technical definitions, schemas, phases, assessment, roadmap, and validation criteria are fully specified herein.
 
 ### For Implementation
-Any system claiming to be "CMA" must include all four pillars as defined. Partial implementations should not be labeled as Cognitive Mesh Architecture.
+Any system claiming to be "CMA" must include all four pillars as defined. Partial implementations should not be labeled as Cognitive Mesh Architecture. UIC implementations must satisfy the content record contract, deployment phases, and validation criteria defined in this specification.
 
 ### For Validation
-Use this document to verify that CMA discussions, proposals, or implementations maintain technical integrity and accuracy.
+Use this document to verify that CMA discussions, proposals, or implementations maintain technical integrity and accuracy. UIC compliance is validated against the UIC Content Schema, Semantic Metadata Architecture Levels, Asset Relationship Schema, and UIC Validation and Performance Monitoring criteria in this specification.
 
-> **Key Principle:** This specification represents the complete and authoritative technical definition of CMA. All implementations must align with these requirements.
+> **Key Principle:** This specification represents the complete and authoritative technical definition of CMA and UIC. All implementations must align with these requirements. Related UIC documents (ultra-intelligent-content.md, ultra-intelligent-content-tech-implementation.md, ultra-intelligent-content-semantic-schema-framework.md) provide extended narrative, examples, and platform-specific draft schemas; this document is the single source of technical truth.
+
+**Narrative and business case:** For the strategic story, ROI framing, and thought-leadership version of CMA (Flywheel, Four Pillars, use cases), see the [CMA whitepaper](../thought-leadership/cma-whitepaper.md).
 
 ---
 
@@ -85,8 +87,23 @@ CMA implementations are built on a three-tier architecture that separates concer
 
 **Capabilities:**
 - Find assets by meaning rather than exact text
-- Combine similarity search with metadata filters (type, quality, status)
+- Combine similarity search with metadata filters (type, quality, status)—**hybrid retrieval** (vector + metadata/coherence filters) with optional **reranking** by Strategic Asset Score or preservation criteria where supported
 - Enable intelligent content discovery and cross-asset pattern recognition
+
+**Chunking for embeddings (implementation note):** For section-level or sub-asset embeddings, consider research-backed chunking: meaningful units (e.g. atomic components or sections) with sizes aligned to anticipated queries; optional overlap (e.g. 10–15%) where boundary continuity matters. Token ranges (e.g. 512–1024) are implementation-specific; governance defines what constitutes a meaningful chunk per content type.
+
+#### Graph and Vector: Complementary Roles (Hybrid Architecture)
+
+Vectors and graph-like structure are **not mutually exclusive**—the strongest agent architectures use both, with distinct roles:
+
+| Vectors (Tier 3) | Graph / structure (Tier 2) |
+|------------------|----------------------------|
+| Retrieve **similar** text by meaning | Provide **structure**: lineage, relationships, hierarchy |
+| Carry **narrative** (embedded semantic content) | Store **facts**: who derived from whom, relationship types, preservation scores |
+| Subsymbolic pattern recognition | Symbolic world model (assets, edges, constraints) |
+| Search by text/similarity | Traverse by relationship; multi-hop reasoning |
+
+**CMA alignment:** Tier 2 (Intelligence Storage) is the **structural foundation**: assets as nodes, with explicit **lineage** (`derived_from_assets`, `recomposed_from_content_id`, `adaptation_history`), **asset_relationships** (primary/derived, relationship type, semantic_connection_strength), and **content_generation_lineage**. That structure is first-class—either embedded in records or in dedicated relationship stores (`asset_relationships`). Tier 3 (Semantic Layer) adds **vector index** over the same assets for similarity-based discovery. Agents should be able to **traverse the graph** (e.g. from Brand Story → Audience Stories → Content Assets; or from content → originating_assets → related content) and **query by similarity** (vector search), with hybrid retrieval combining both where supported. The graph should not be an optional add-on to a document store; the relationship/lineage model is part of the core data model, and vectors augment retrieval over it.
 
 ### Architecture Integration
 
@@ -114,8 +131,8 @@ CMA implementations are built on a three-tier architecture that separates concer
 **Agent Interaction Pattern:**
 1. **Initialize:** Read Tier 1 memories → resolve asset IDs and preferences
 2. **Load:** Retrieve referenced assets from Tier 2 (using selective field retrieval)
-3. **Discover:** Use Tier 3 semantic search for relevant examples and patterns
-4. **Create/Update:** Write to Tier 2 with proper schema; update Tier 1 pointers as needed
+3. **Discover:** Use Tier 3 semantic search (vector similarity) and/or Tier 2 graph traversal (lineage, asset_relationships, multi-hop from asset to derived/originating content) for relevant examples and patterns; hybrid retrieval combines both where supported
+4. **Create/Update:** Write to Tier 2 with proper schema and relationship/lineage fields; update Tier 1 pointers as needed
 5. **Embed:** Generate/update Tier 3 embeddings for new content
 
 > **See also:** [content-data-architecture.md](content-data-architecture.md) for detailed implementation guidance and Brightsy-specific considerations.
@@ -149,6 +166,8 @@ Every content record MUST include the following to qualify as Ultra-Intelligent 
 - **`ultra_intelligent_metadata`** with creation_context, strategic_intelligence_preservation, and atomic_components (where applicable)
 - **Lineage fields:** `intelligence_assets_referenced` or `derived_from_assets` on creation; `recomposed_from_content_id` and `adaptation_history` on recomposition
 - Pre-save validation confirming contract compliance
+
+**Optional provenance and disclosure (governance):** For compliance and consumer transparency (e.g. AI labeling expectations), implementations may extend `creation_context` with optional fields such as `human_approval_status` (e.g. draft | human_reviewed | human_approved) or `provenance` (e.g. ai_generated | human_authored | human_edited). Governance defines whether and how these are required per content type or jurisdiction.
 
 **Selective Retrieval Profiles:**
 Governance-approved field lists per asset type ensure retrieval aligns with schema and reduces cognitive/token load:
@@ -422,7 +441,7 @@ StoryCycle Genie V2 implements CMA through a **governance-first, orchestrator + 
 - **Organizational Learning Acceleration** - Memory-enhanced knowledge accumulation throughout the evolution framework
 - **Strategic Memory Governance** - Systematic memory utilization that amplifies intelligence evolution effectiveness
 
-> **See also:** [storycycle-genie-v2-executable-vision.md](storycycle-genie-v2-executable-vision.md) for complete implementation details, phase breakdown, and MCP specifications.
+> **See also:** [storycycle-genie-v2-executable-vision.md](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) for complete implementation details, phase breakdown, and MCP specifications.
 
 ### Stage Definitions
 
@@ -542,6 +561,8 @@ Measurement across individual, team, and organizational levels of memory-driven 
 | UIC schema compliance (new content) | 100% |
 | Recomposition strategic preservation | > 90% |
 
+*UIC-specific validation criteria, semantic preservation metrics, and performance monitoring are defined in **Ultra-Intelligent Content (UIC)** → UIC Validation and Performance Monitoring.*
+
 ### Key Performance Indicator
 **Professional expertise amplification** - system becomes more valuable with each approved output rather than requiring constant management, enhanced by strategic memory governance and validated through Strategic Asset Score
 
@@ -619,14 +640,50 @@ Organizations become systematically smarter rather than just faster through enha
 - **Lineage Tracking** - Content records track source assets and adaptation history
 - **Cross-Platform Optimization** - Single content creation flows to multiple optimized outputs
 
+**Strategic Vision:** UIC transforms content from static business assets into **active cognitive infrastructure** that becomes more valuable with every professional interaction, creating compound returns on systematic intelligence investment while preserving and amplifying professional expertise.
+
+#### UIC Deployment Phases
+
+| Phase | Scope | CMA Requirement |
+|-------|--------|------------------|
+| **Phase 1: UIC Foundation** | Content from Structured Intelligence Assets; multi-agent adaptive recomposition; semantic architecture; strategic auditing; intelligent querying | Establishes foundational elements toward complete four-pillar CMA |
+| **Phase 2: UIC with Performance Learning** | Everything in Phase 1, plus: performance analytics integration; compound learning from every interaction; analytics-driven optimization; predictive content strategy; self-improving content ecosystem | Complete CMA with all four pillars operational; partial implementation cannot deliver organizational intelligence amplification |
+
+#### Recomposition Agent Roles
+
+The four-step recomposition flow is executed by coordinated specialist roles (implemented as orchestrator + skills or distinct agents):
+
+| Role | Responsibility |
+|------|-----------------|
+| **Context Analysis** | Platform requirements and constraints; audience intelligence for new context; strategic objectives; cognitive flow implications |
+| **Component Selection** | Relevant atomic components from source; strategic alignment with new context; brand message hierarchy; proof element validity |
+| **Semantic Recombination** | Rebuild content for target format/platform; voice consistency via semantic markers; strategic coherence via intelligence asset connection; cognitive flow optimization |
+| **Quality Assurance** | Validation against Framework Governance; brand message hierarchy; strategic framework alignment (Collective Intelligence Ecosystem); professional standards (Embedded Intelligence Architecture); cognitive flow principles |
+
+**Example Recomposition Scenarios:**
+- **Blog Post → Social Media Series:** Content Analysis → Platform Optimization → Voice Consistency → Strategic Alignment → Sequence Coordination → platform-optimized posts with preserved meaning
+- **Email Sequence → Presentation Slides:** Narrative Analysis → Visual Content extraction → Presentation Optimization → Proof Element preservation → Flow Coordination → slides with preserved strategic coherence
+
+#### Semantic Metadata Architecture Levels
+
+UIC semantic structure is organized in four levels (governance defines which levels are required per content type):
+
+| Level | Name | Contents |
+|-------|------|----------|
+| **Level 1** | Basic Semantic Tagging | Content type and format; platform optimization; audience targeting; publishing workflow status |
+| **Level 2** | Strategic Intelligence Markers | Brand positioning preservation; strategic message hierarchy; proof elements and credibility markers; content pillar and framework alignment |
+| **Level 3** | Adaptive Recomposition Data | Atomic component identification and tagging; cross-format adaptation constraints; semantic meaning preservation; context-aware recomposition rules |
+| **Level 4** | Multi-Agent Coordination Intelligence | Agent collaboration history; context handoff and preservation protocols; cognitive flow optimization data; organizational learning capture |
+
 #### UIC Content Schema (Governance)
 
 UIC implements the **content record contract** as part of Framework Governance. Every content record MUST include:
 
 **Core Fields (Tier 1 within Intelligence Storage):**
 - **`ultra_intelligent_metadata`**
-  - `creation_context`: originating_agent, coordinating_agents, intelligence_assets_referenced
-  - `strategic_intelligence_preservation`: brand_positioning_elements, content_strategy_alignment, semantic_meaning_markers
+  - `creation_context`: originating_agent, coordinating_agents, intelligence_assets_referenced; **optional:** `cognitive_flow_maintained` (boolean), `professional_intelligence_density` (numeric), `human_approval_status` (e.g. draft | human_reviewed | human_approved), `provenance` (e.g. ai_generated | human_authored | human_edited) for disclosure and compliance
+  - `strategic_intelligence_preservation`: brand_positioning_elements, content_strategy_alignment, semantic_meaning_markers; **optional:** audience_intelligence_application
+  - **Optional:** `adaptive_recomposition_capabilities.narrative_structure_preservation`: abt_framework_compliance, story_arc_maintenance, cognitive_flow_optimization
 - **`atomic_components`**: Array of extractable, recomposable elements
   - `component_type`: key_insight, proof_element, cta, headline, etc. (varies by content type)
   - `content`: The actual component text/content
@@ -639,10 +696,11 @@ UIC implements the **content record contract** as part of Framework Governance. 
   - `adaptation_history`: Array of {target_format, date, preservation_score}
 - **`multi_agent_coordination_data`**
   - `coordinating_agent_roles`: Snapshot of which specialists participated
+  - **Optional:** `handoff_intelligence`: context_preservation_data, cognitive_flow_continuity, intelligence_building_coordination
 
 **Extended Fields (Tier 2 - Optional):**
-- Detailed adaptation rules per component
-- Full relationship map (derives_from, supports_components, contradicts_concepts)
+- Detailed adaptation rules per component (e.g. `adaptation_rules_ref`, `relationship_map_ref` linking to separate records)
+- Full relationship map (derives_from, supports_components, contradicts_concepts, amplifies_concepts)
 - May live in separate record or deeply nested per platform constraints
 
 #### Atomic Component Types by Content Type
@@ -678,11 +736,104 @@ Within Tier 2 (Intelligence Storage), the **core vs extended** split is recommen
 
 This pattern optimizes query performance while preserving comprehensive semantic intelligence.
 
+#### Asset Relationship Schema and Intelligence Flow Tracking
+
+**Asset Relationship Structure:** Track how intelligence flows from foundational assets through derived content.
+- **primary_asset_id** / **derived_assets**: Relationship type (e.g. strategic_extension, strategic_application), intelligence_preservation, semantic_connection_strength
+- **content_generation_lineage**: content_id, originating_assets, intelligence_flow; **adaptive_recomposition_history**: target_format, adaptation_date, semantic_preservation_score, coordinating_agents
+
+**Intelligence Flow Tracking Requirements:**
+- **Asset Lineage Mapping:** How intelligence flows from foundational assets through derived content
+- **Semantic Connection Scoring:** Relationship strength between related assets and content
+- **Adaptation History Logging:** All recompositions with preservation metrics
+- **Cross-Reference Pattern Recognition:** Successful intelligence application patterns across contexts
+
+#### Brightsy and Platform Implementation Considerations
+
+**Two-Tier Structure Requirement:** Complex nested schemas may need to be split into two tiers for optimal performance on platforms (e.g. Brightsy):
+- **Tier 1 (Core):** Primary content/asset records; essential metadata; minimal nesting (max 2–3 levels); indexed fields for common queries
+- **Tier 2 (Extended):** Complex semantic relationships; detailed adaptation rules; linked via reference keys; batch/background analysis data
+
+*Note: This two-tier schema (Core / Extended) is a data/schema pattern within Tier 2 (Intelligence Storage) of CMA's three-tier system architecture (Memory → Intelligence Storage → Semantic).*
+
+**Performance Optimization:** Evaluate per platform: maximum recommended JSON nesting depth; query performance against deeply nested structures; indexing for semantic/relationship queries; API response time constraints for multi-agent coordination.
+
+#### Semantic Schema Categories (Extended Schema Reference)
+
+Beyond the content record contract, implementations may adopt extended semantic schemas for richer intelligence preservation:
+
+| Category | Purpose |
+|----------|---------|
+| **Strategic Context Preservation** | core_strategic_data (primary_message, strategic_importance, message_category, adaptation_level); extended_intelligence_ref; related_assets; supporting_messages |
+| **Professional Intelligence Context** | expertise_validation (research_backing, practical_methodology); domain_expertise_density; credibility_preservation_requirements |
+| **Cross-Format Adaptation Rules** | format_transformation_protocols (extraction_logic, compression_strategy, semantic_preservation); constraint_enforcement (brand_voice_consistency, strategic_coherence) |
+| **Agent Handoff Intelligence** | context_preservation (strategic_context_transfer, technical_context_transfer); coordination_protocols (seamless_transition_requirements, collaborative_enhancement) |
+| **Semantic Intelligence Processing** | natural_language_understanding (strategic_meaning_extraction, professional_sophistication_assessment); semantic_metadata_generation (automatic_tagging, quality_assurance_validation) |
+
+Governance defines which categories are required vs optional per content type and platform.
+
+#### UIC Assessment and Gap Analysis Framework
+
+**Current Architecture Assessment (per CMA pillar):**
+- **Framework Governance:** Specialist agent coordination count; protocols for consistency; voice/methodology standards; shared behavioral libraries
+- **Collective Intelligence Ecosystem:** Existing Structured Intelligence Assets; semantic schema definitions; cross-asset pattern recognition; institutional knowledge preservation
+- **Intelligent Orchestration:** User handoffs between agents; context preservation; cognitive flow during complex workflows; behind-the-scenes agent collaboration
+- **Embedded Intelligence Architecture:** Professional knowledge per agent; domain expertise; sophistication without user context; research and best-practices integration
+
+**Gap Analysis Matrix:** For each UIC requirement (Multi-Agent Adaptive Recomposition, Semantic Intelligence Processing, Cross-Asset Pattern Recognition, Atomic Component Management, Context-Aware Adaptation, Strategic Coherence Preservation), assess: Current Implementation Status; Gap Severity (Critical/Major/Minor); Implementation Priority (High/Medium/Low).
+
+#### UIC Implementation Roadmap (Phased)
+
+| Phase | Objectives | Key Deliverables |
+|-------|------------|-------------------|
+| **Foundation Assessment (Weeks 1–2)** | Architecture audit; asset inventory; agent coordination documentation; semantic/metadata capabilities | Current state documentation; CMA pillar gap analysis; asset inventory; technical infrastructure requirements |
+| **Semantic Architecture Design (Weeks 3–4)** | UIC semantic schemas; atomic component protocols; cross-asset relationship mapping; recomposition rule frameworks | Schema specifications; atomic component protocols; relationship frameworks; recomposition requirements |
+| **Multi-Agent Coordination Enhancement (Weeks 5–6)** | Agent coordination protocols; context preservation and handoff; cognitive flow optimization; organizational learning capture | Coordination specs; handoff protocols; cognitive flow requirements; learning capture frameworks |
+| **Implementation and Testing (Weeks 7–10)** | Semantic architecture and coordination implementation; adaptive recomposition; cross-asset pattern recognition; performance and QA | Functional UIC capabilities; benchmarks; QA results; UX and cognitive flow outcomes |
+
+Timing is indicative; align with governance-first sequence and platform constraints.
+
+**Implementation Framework (capability view):**
+- **Phase 1: Semantic Structure Implementation** — Content schema agents; tagging taxonomy; integration with Structured Intelligence Assets; domain intelligence agents; AI tagging
+- **Phase 2: Atomic Component Architecture** — Component identification; component library with semantic metadata; relationship mapping; component extraction from existing content
+- **Phase 3: Multi-Agent Recomposition Engine** — Context analysis; selection algorithms; recombination logic preserving semantic coherence; QA through framework oversight
+
+#### Data Migration and Transition Planning
+
+- **Content Audit and Classification:** Analyze existing content for UIC potential; semantic enhancement opportunities; adaptive recomposition candidates; cross-asset relationship discovery
+- **Content Curation and Retirement:** Align inventory with strategic value (e.g. high-coherence, referenced assets); retire or consolidate duplicate, outdated, or low-value content where appropriate; curate retained content to a manageable set that supports quality retrieval and recomposition (implementation-specific targets; research suggests rigorous curation improves AI outcome quality)
+- **Transition Strategy:** Gradual enhancement; backward compatibility; user experience continuity; minimal performance impact during implementation
+
+#### Implementation Decision Framework
+
+**Architecture Patterns:** Event-driven vs request-response for multi-agent coordination; centralized vs distributed intelligence; synchronous vs asynchronous recomposition; caching vs real-time generation.
+**Technology Stack:** Semantic processing (NLP/semantic analysis); storage for complex semantic schemas and relationships; agent communication protocols; QA and validation automation.
+**Scalability and Performance:** Content volume growth; concurrent user and recomposition load; agent coordination optimization; monitoring and alerting.
+
+#### UIC Validation and Performance Monitoring
+
+**Semantic Preservation Validation:**
+- Strategic meaning maintenance (core_message_preservation, brand_positioning_consistency, competitive_differentiation_preservation, professional_sophistication_maintenance)
+- Adaptation quality (format_appropriateness, engagement_potential, cognitive_load_optimization, call_to_action_effectiveness)
+- Brand voice compliance (tone_consistency, complexity_balance, audience_appropriate_depth)
+
+**Performance Metrics:**
+- **UIC-specific:** Semantic preservation accuracy; adaptive recomposition quality; cross-asset pattern recognition effectiveness; cognitive flow optimization impact
+- **Organizational intelligence:** Intelligence asset growth; cross-asset reference utilization; strategic coherence consistency; compound learning validation
+- **Technical:** Multi-agent coordination efficiency; semantic processing performance; recomposition speed; scalability and reliability
+
+**Success Validation Criteria (indicative):** Semantic preservation accuracy ≥95%; context handoffs sub-200 ms with zero information loss; brand voice compliance ≥90% across adaptations; content creation acceleration (e.g. 50% reduction concept-to-multi-format deployment); strategic consistency alignment ≥95%.
+
+#### StoryCycle Genie Integration Points
+
+- **Existing asset enhancement:** Brand Story, Audience Intelligence, Content Strategy—add strategic context preservation, atomic component extraction, cross-format adaptation potential
+- **Agent capability enhancement:** Content creation agents—semantic processing, QA automation, cross-format optimization; specialized agents—coordination protocols, handoff intelligence, collaborative intelligence building, performance optimization
+
 **CMA Integration:** Ultra-Intelligent Content represents the natural evolution of Structured Intelligence Assets - where content itself becomes systematically intelligent rather than just being informed by intelligence frameworks.
 
 **Current Status:** Advanced development phase, building on proven CMA principles and Structured Intelligence Asset foundations.
 
-> **See also:** [ultra-intelligent-content.md](ultra-intelligent-content.md), [ultra-intelligent-content-tech-implementation.md](ultra-intelligent-content-tech-implementation.md), [ultra-intelligent-content-semantic-schema-framework.md](ultra-intelligent-content-semantic-schema-framework.md) for detailed schemas and implementation guidance.
+> **Related documentation (extended examples and background):** [ultra-intelligent-content.md](../implementation/ultra-intelligent-content/ultra-intelligent-content.md), [ultra-intelligent-content-tech-implementation.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md), [ultra-intelligent-content-semantic-schema-framework.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md). This specification is the **authoritative technical definition** of UIC; those documents provide narrative context, full JSON examples, and Brightsy-specific draft schemas.
 
 ### Adaptive UX Framework Integration *(Future Enhancement)*
 
@@ -777,18 +928,20 @@ Intelligence amplification that maintains and enhances professional thinking pat
 
 ### Core Architecture
 - [content-data-architecture.md](content-data-architecture.md) — Three-tier architecture, data model, Brightsy implementation considerations
-- [cma-whitepaper.md](cma-whitepaper.md) — Strategic narrative and business case for CMA
+- [cma-whitepaper.md](../thought-leadership/cma-whitepaper.md) — Strategic narrative and business case for CMA
 
 ### Ultra-Intelligent Content
-- [ultra-intelligent-content.md](ultra-intelligent-content.md) — UIC definition, phases, and multi-agent recomposition
-- [ultra-intelligent-content-tech-implementation.md](ultra-intelligent-content-tech-implementation.md) — Technical implementation framework and gap analysis
-- [ultra-intelligent-content-semantic-schema-framework.md](ultra-intelligent-content-semantic-schema-framework.md) — Detailed semantic schemas and Brightsy two-tier patterns
+*This specification is the **authoritative technical definition** of UIC. The documents below provide extended narrative, full JSON examples, and platform-specific draft schemas.*
+
+- [ultra-intelligent-content.md](../implementation/ultra-intelligent-content/ultra-intelligent-content.md) — UIC narrative, evolution, phases, and multi-agent recomposition scenarios
+- [ultra-intelligent-content-tech-implementation.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) — Full Core Content Intelligence Schema JSON, assessment questions, and implementation methodology
+- [ultra-intelligent-content-semantic-schema-framework.md](../implementation/ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md) — Detailed semantic schemas (Strategic Context, Professional Intelligence Context, Adaptation Rules, Agent Handoff, QA/Performance), Brightsy two-tier patterns, and phased schema implementation
 
 ### Reference Implementation
-- [storycycle-genie-v2-executable-vision.md](storycycle-genie-v2-executable-vision.md) — Complete V2 architecture, phases, governance-first implementation
-- [storycycle-genie-complete-vision-extension.md](storycycle-genie-complete-vision-extension.md) — UIC capture, recomposition, memory, and lineage phases
-- [storycycle-record-types-summary.md](storycycle-record-types-summary.md) — Current record type schemas and CMA gap analysis
+- [storycycle-genie-v2-executable-vision.md](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) — Complete V2 architecture, phases, governance-first implementation
+- [storycycle-genie-complete-vision-extension.md](../archive/storycycle-genie-complete-vision-extension.md) — UIC capture, recomposition, memory, and lineage phases (archived)
+- [storycycle-record-types-summary.md](../implementation/storycycle-genie/storycycle-record-types-summary.md) — Current record type schemas and CMA gap analysis
 
 ---
 
-*This specification represents the complete and authoritative technical definition of Cognitive Mesh Architecture. All implementations and discussions must align with these core concepts to maintain technical integrity and accuracy.*
+*This specification represents the complete and authoritative technical definition of Cognitive Mesh Architecture and Ultra-Intelligent Content. All implementations and discussions must align with these core concepts to maintain technical integrity and accuracy.*

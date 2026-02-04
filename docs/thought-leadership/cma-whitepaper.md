@@ -2,6 +2,8 @@
 
 *How to transform your organization's cognitive capacity through systematic professional intelligence enhancement via coordinated multi-agent systems*
 
+**Technical authority:** The [CMA Technical Specification](../spec/cma-technical-spec.md) is the complete and authoritative technical definition of CMA and Ultra-Intelligent Content (schemas, phases, validation). This whitepaper provides the narrative and business case.
+
 ---
 
 ## The Intelligence Amplification Imperative
@@ -118,9 +120,17 @@ While traditional intelligent content focuses on **content modularity and operat
 - **Lineage Tracking**: Content records track source assets and adaptation history, enabling compound intelligence across the content ecosystem
 - **Cognitive Flow Optimization**: Content systems designed around professional intelligence conditions rather than just workflow efficiency
 
-**Technical Foundation**: Ultra-Intelligent Content is realized through a **content record contract** and **governance-first schema** baked into the base framework. This ensures every agent enforces the same data structure—semantic metadata, atomic components, and lineage fields—by design rather than as an afterthought. See the [CMA Technical Specification](cma-technical-spec.md) for detailed schema definitions.
+**Technical Foundation**: Ultra-Intelligent Content is realized through a **content record contract** and **governance-first schema** baked into the base framework. This ensures every agent enforces the same data structure—semantic metadata, atomic components, and lineage fields—by design rather than as an afterthought. The [CMA Technical Specification](../spec/cma-technical-spec.md) is the **complete and authoritative technical definition** of UIC (schemas, deployment phases, assessment, roadmap, validation).
 
-**Strategic Positioning**: CMA represents the next evolutionary stage beyond operational content intelligence - advancing from "content as infrastructure" to "content as cognitive infrastructure" that amplifies organizational intelligence.
+**Strategic Vision**: Ultra-Intelligent Content transforms content from static business assets into **active cognitive infrastructure** that becomes more valuable with every professional interaction, creating compound returns on systematic intelligence investment while preserving and amplifying professional expertise.
+
+**UIC Deployment Phases**: Implementation scope is defined in two phases. **Phase 1 (UIC Foundation)** establishes content from Structured Intelligence Assets, multi-agent adaptive recomposition, semantic architecture, strategic auditing, and intelligent querying—building toward complete four-pillar CMA. **Phase 2 (UIC with Performance Learning)** adds performance analytics integration, compound learning from every interaction, analytics-driven optimization, predictive content strategy, and a self-improving content ecosystem; it requires complete CMA with all four pillars operational.
+
+**Recomposition and Coordination**: Adaptive recomposition follows a four-step flow executed by coordinated specialist roles: **Context Analysis** (platform, audience, constraints, cognitive flow); **Component Selection** (relevant atomic components, strategic alignment, brand hierarchy); **Semantic Recombination** (rebuild for target format while preserving meaning); **Quality Assurance** (Framework Governance, brand voice, strategic coherence). Example scenarios include Blog Post → Social Media Series and Email Sequence → Presentation Slides, with platform-optimized outputs preserving strategic meaning.
+
+**Semantic Architecture**: UIC semantic structure is organized in four levels—Basic Semantic Tagging; Strategic Intelligence Markers; Adaptive Recomposition Data; Multi-Agent Coordination Intelligence—with governance defining which levels apply per content type. Asset relationship schema and intelligence flow tracking (lineage mapping, semantic connection scoring, adaptation history, cross-reference pattern recognition) enable compound intelligence across the content ecosystem.
+
+**Strategic Positioning**: CMA represents the next evolutionary stage beyond operational content intelligence - advancing from "content as infrastructure" to "content as cognitive infrastructure" that amplifies organizational intelligence. For all UIC technical definitions, content record contract, deployment phases, assessment and gap analysis, implementation roadmap, validation and performance monitoring, and StoryCycle Genie integration points, see the [CMA Technical Specification](../spec/cma-technical-spec.md).
 
 ---
 
@@ -357,7 +367,7 @@ We're testing CMA principles through StoryCycle Genie's multi-agent architecture
 
 **All Four Pillars Required**: Complete CMA implementation requires all components working together through coordinated multi-agent architecture.
 
-**Governance-First Schema and Data Architecture**: Define schema and data architecture (UIC content schema, lineage, memory conventions) before or alongside pillar implementation. Bake the **content record contract** into the base framework so every agent enforces the same structure. See [CMA Technical Specification](cma-technical-spec.md) for detailed requirements.
+**Governance-First Schema and Data Architecture**: Define schema and data architecture (UIC content schema, lineage, memory conventions) before or alongside pillar implementation. Bake the **content record contract** into the base framework so every agent enforces the same structure. See [CMA Technical Specification](../spec/cma-technical-spec.md) for detailed requirements.
 
 **Ultra-Intelligent Content as Foundation**: Structured Intelligence Assets with capture at creation (`ultra_intelligent_metadata`, `atomic_components`) provide the core intelligence that enables all other CMA capabilities, with coordinated agent collaboration accessing and enhancing this foundational intelligence.
 
@@ -449,7 +459,7 @@ CMA represents the systematic approach to preserving and amplifying human expert
 
 **Framework Review**: Examine complete technical specification for detailed understanding of CMA principles and multi-agent architecture requirements
 
-**Schema and Governance**: Review [CMA Technical Specification](cma-technical-spec.md) and UIC schema documentation for content record contract, selective retrieval profiles, and governance-first implementation patterns
+**Schema and Governance**: Review [CMA Technical Specification](../spec/cma-technical-spec.md) and UIC schema documentation for content record contract, selective retrieval profiles, and governance-first implementation patterns
 
 **ROI Projection**: Consider potential Return on Intelligence through foundational Ultra-Intelligent Content and systematic cognitive capacity enhancement
 
@@ -481,7 +491,9 @@ We're in the early stages of validating this approach through StoryCycle Genie's
 
 ## Related Documentation
 
-- [CMA Technical Specification](cma-technical-spec.md) — Complete technical definition, system architecture, UIC schema, implementation requirements
-- [StoryCycle Genie V2 Architecture](storycycle-genie-v2-executable-vision.md) — Reference implementation details, governance-first approach, phase breakdown
-- [Ultra-Intelligent Content](ultra-intelligent-content.md) — UIC definition, phases, and multi-agent recomposition
+- [CMA Technical Specification](../spec/cma-technical-spec.md) — **Authoritative technical definition** of CMA and Ultra-Intelligent Content: system architecture, UIC content schema, deployment phases, semantic metadata levels, recomposition agent roles, asset relationship schema, assessment and gap analysis, implementation roadmap, validation and performance monitoring, StoryCycle Genie integration
+- [StoryCycle Genie V2 Architecture](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) — Reference implementation details, governance-first approach, phase breakdown
+- [Ultra-Intelligent Content](../implementation/ultra-intelligent-content/ultra-intelligent-content.md) — UIC narrative, evolution, phases, and multi-agent recomposition scenarios (technical spec is authoritative)
+- [Ultra-Intelligent Content Technical Implementation](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) — Full schema JSON, assessment methodology, implementation framework (technical spec is authoritative)
+- [Ultra-Intelligent Content Semantic Schema Framework](../implementation/ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md) — Detailed semantic schemas and Brightsy two-tier patterns (technical spec is authoritative)
 - [Content Data Architecture](content-data-architecture.md) — Three-tier architecture, data model, Brightsy implementation

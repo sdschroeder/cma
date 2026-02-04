@@ -5,6 +5,10 @@ todos: []
 isProject: true
 ---
 
+> **Superseded by:** [storycycle-genie-v2-executable-vision.md](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) — the single reference for StoryCycle Genie implementation (goals, architecture, phases, skills, UIC, recomposition). This doc is retained for **design history** only. *Archived in docs/archive/.*
+
+---
+
 # Unified Token Optimization & Content Consolidation Plan
 
 ## Executive Summary
