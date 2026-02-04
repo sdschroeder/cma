@@ -10,7 +10,7 @@
 
 Organizations pursuing their mission and vision in today's complex environment face a fundamental challenge: how do you enhance your team's cognitive capacity to make better decisions and execute more effectively, rather than simply processing more information faster?
 
-Most leaders I talk with recognize that their knowledge workers are overwhelmed despite significant investments in productivity tools and AI systems. The issue isn't lack of information or processing power—it's that current approaches optimize for efficiency rather than intelligence amplification, creating sophisticated automation without enhancing the human expertise that drives organizational mission fulfillment.
+Most leaders I talk with recognize that their knowledge workers are overwhelmed despite significant investments in productivity tools and AI systems. The issue isn't lack of information or processing power—it's that current approaches optimize for efficiency rather than intelligence amplification, creating sophisticated automation without enhancing the human expertise that drives organizational mission fulfillment. Industry research reflects this shift: Gartner projects that 60% of brands will use agentic AI for one-to-one interactions by 2028, moving from channel-based to ecosystem-based strategy—yet most organizations remain unprepared to capture and amplify the professional intelligence behind those interactions.
 
 This is the problem that led me to develop **Cognitive Mesh Architecture (CMA)**: a systematic framework for creating optimal conditions where professional intelligence can emerge, compound, and drive measurable organizational enhancement through coordinated multi-agent systems. Rather than replacing human thinking with automation, CMA amplifies the cognitive capacity your team already possesses through specialized AI agents working together as a unified cognitive mesh.
 
@@ -108,6 +108,8 @@ Cognitive Mesh Architecture builds on the foundational intelligent content work 
 - **Success Metric**: Return on Intelligence - compound organizational learning that creates competitive advantages
 - **AI Integration**: Multi-agent coordination that builds on strategic intelligence while preserving cognitive flow
 
+A critical distinction from current AI-content practice: AI excels at *constructed* content—summaries, product copy, variants, abstracts—while humans must own *created* content: thought leadership, original ideas, and strategic narrative. CMA and Ultra-Intelligent Content are built so that created content—the kind that carries professional reasoning and brand positioning—is what gets captured, structured, and amplified, rather than lost in a flood of constructed output.
+
 ### The CMA Advancement
 
 While traditional intelligent content focuses on **content modularity and operational efficiency**, Ultra-Intelligent Content preserves the **strategic reasoning and professional intelligence** that created the content. This enables:
@@ -178,6 +180,8 @@ Traditional UX optimizes for task completion speed. **CMA requires UX design tha
 **What This Means**: Your organization's professional expertise gets captured in Ultra-Intelligent Content (Structured Intelligence Assets) that serves as the foundation of all collective intelligence, enabling access, building upon, and adaptation across formats while preserving strategic meaning through specialized agents working together.
 
 **Three-Tier Architecture**: CMA organizes intelligence across three tiers: (1) **Memory layer** for lightweight context, pointers, and preferences; (2) **Intelligence storage** for full assets, lineage, and relationships; (3) **Semantic layer** for embeddings and meaning-based retrieval. This separation enables fast context loading while preserving comprehensive intelligence.
+
+**Why hybrid (structure + vectors)?** Vectors and graphs are complementary, not competing. Structure—lineage, asset relationships, adaptation history—serves as the foundation; vectors serve as the retrieval layer. You can't reliably "find by meaning" without explicit structure underneath; Tier 3 semantic search operates on top of Tier 2's graph of assets and relationships, so discovery combines "find similar" with "traverse from this asset to related content." The strongest agent architectures are hybrid in this sense; CMA bakes that into the data model.
 
 **Three Integrated Components**:
 
@@ -492,6 +496,7 @@ We're in the early stages of validating this approach through StoryCycle Genie's
 ## Related Documentation
 
 - [CMA Technical Specification](../spec/cma-technical-spec.md) — **Authoritative technical definition** of CMA and Ultra-Intelligent Content: system architecture, UIC content schema, deployment phases, semantic metadata levels, recomposition agent roles, asset relationship schema, assessment and gap analysis, implementation roadmap, validation and performance monitoring, StoryCycle Genie integration
+- [Research: CMA/UIC alignment with intelligent content and RAG](../research/) — Alignment of CMA and Ultra-Intelligent Content with current research on intelligent content modeling, graph-vector hybrid architecture, and RAG-ready content (see [uic-content-model-alignment-review.md](../research/uic-content-model-alignment-review.md), [graph-vector-hybrid-alignment.md](../research/graph-vector-hybrid-alignment.md), [intelligent-content-modeling-ai.md](../research/intelligent-content-modeling-ai.md))
 - [StoryCycle Genie V2 Architecture](../implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) — Reference implementation details, governance-first approach, phase breakdown
 - [Ultra-Intelligent Content](../implementation/ultra-intelligent-content/ultra-intelligent-content.md) — UIC narrative, evolution, phases, and multi-agent recomposition scenarios (technical spec is authoritative)
 - [Ultra-Intelligent Content Technical Implementation](../implementation/ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) — Full schema JSON, assessment methodology, implementation framework (technical spec is authoritative)
