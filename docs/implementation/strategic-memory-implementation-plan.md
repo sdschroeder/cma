@@ -26,8 +26,8 @@ These decisions resolve the open architecture questions from the exploration and
 | `cma.user.preferences` | User | Global | `workflow_mode`, `detail_level`, `option_presentation` |
 | `cma.team.defaults` | Team | Global | `coherence_minimum`, `confidence_auto_approve`, `content_approval_required`, `required_specialists` — fallback when no brand-specific standards exist |
 | `cma.team.brand.{brand_id}` | Team | Per-brand | `coherence_minimum`, `required_specialists`, `voice_standards`, `preferred_content_types`, `content_approval_required` — standards for this specific brand |
-| `cma.agent.effectiveness` | Agent | Global | `specialist_sequence_outcomes`, `specialist_value_by_content_type`, `foundation_load_priorities` |
-| `cma.agent.learning` | Agent | Global | `common_user_corrections`, `avg_revisions_by_type`, `high_value_creation_sequences`, `anti_patterns` |
+| `cma.process.effectiveness` | Team | Global | `specialist_sequence_outcomes`, `specialist_value_by_content_type`, `foundation_load_priorities` — system-accumulated process intelligence |
+| `cma.process.learning` | Team | Global | `common_user_corrections`, `avg_revisions_by_type`, `high_value_creation_sequences`, `anti_patterns` — system-accumulated process learning |
 
 **Example — user context:**
 ```json
@@ -83,7 +83,7 @@ These decisions resolve the open architecture questions from the exploration and
 | `cma.user.context` (primary_brand_id, audiences, campaign) | **Session context** | Updates when user switches brands. Points to the active brand. |
 | `cma.team.brand.{brand_id}` (quality bar, voice, specialists, content types) | **Per brand** | These describe how work for this brand should be done. An agency has different standards per client. |
 | `cma.team.defaults` (baseline quality, approval policy) | **Team-wide fallback** | The agency's baseline that applies when no brand-specific standard is set. |
-| `cma.agent.effectiveness`, `cma.agent.learning` | **Global (process intelligence)** | "Narrative → Search is best for blogs" is true regardless of brand. Process intelligence is brand-agnostic. |
+| `cma.process.effectiveness`, `cma.process.learning` | **Global (process intelligence)** | "Narrative → Search is best for blogs" is true regardless of brand. Process intelligence is brand-agnostic. |
 
 **Brand switching flow for an agency user:**
 1. User is working on Brand X. `cma.user.context.primary_brand_id` = Brand X.
@@ -93,18 +93,53 @@ These decisions resolve the open architecture questions from the exploration and
 5. Agent retrieves `cma.team.brand.{brand_y_id}` — quality bar 7.5, friendly approachable voice.
 6. Session continues with Brand Y's standards. No confusion, no bleed between brands.
 
-### Decision 3: Process Intelligence — Memory for Patterns, Records for Logs
+### Decision 3: Agent Memory Availability — Use Team Memory for Process Intelligence
 
-**Decision:** Agent execution *patterns* live in memory (lightweight, fast). Raw execution *logs* live in records (structured, queryable).
+**Status: NEEDS VERIFICATION against Brightsy codebase.** The Brightsy and StoryCycle repos are private. This decision is based on the available evidence below; update once memory infrastructure is confirmed.
+
+**What we know:**
+- Brightsy has `memory_resources → memory_items → memory_item_chunks` with a RetrievalEngine and remember/retrieve tools
+- The CMA authoritative reference describes the current state as "only user/team preferences" — no mention of agent-level memories in use
+- The CMA technical spec lists "Agent Memories - Learned behaviors and process improvements" as a design component, but this may be aspirational
+- The Agent Metadata record type includes a `memory_level` configuration field, suggesting Brightsy has *some* concept of memory levels as agent configuration — but we can't verify what values it accepts or whether it enables a distinct agent-scoped memory store
+- StoryCycle may not be using agent memories today
+
+**What we can't verify without codebase access:**
+- Whether the remember/retrieve tools support an "agent" scope distinct from user/team
+- What values `memory_level` accepts on Agent Metadata
+- Whether agent memories exist as infrastructure but are simply unused by StoryCycle
+
+**Decision:** Rather than block on verifying or adding agent-level memories, store process intelligence at the **team level** with a `cma.process.*` prefix to distinguish it from admin-set team standards.
+
+**Why this works conceptually:** Process intelligence (specialist sequence effectiveness, anti-patterns, revision predictors) applies to all users on the team. It's the team's accumulated operational learning. Storing it at the team level is not a workaround — it's a reasonable fit. The `cma.process.*` prefix makes the distinction clear:
+
+| Prefix | Set by | Purpose |
+|--------|--------|---------|
+| `cma.team.defaults` | Team admin | Admin-set baseline standards |
+| `cma.team.brand.{id}` | Team admin | Admin-set per-brand standards |
+| `cma.process.*` | System (automatic) | System-accumulated process intelligence |
+
+**If agent memories are added to Brightsy later:** Migrate `cma.process.*` from team to agent level. The data and logic are identical; only the storage level changes. The `cma.process.*` naming convention means no restructuring is needed — just a level change.
+
+**When adding agent memories would become valuable:**
+- Multiple distinct agents need *separate* process intelligence (e.g., Brand Genius learns different patterns than Content Creation Orchestrator)
+- The platform wants to offer agent-specific learning as a product feature
+- The volume of process intelligence grows large enough that mixing it with team memory creates noise
+
+**For v1:** Use team-level memory with `cma.process.*` prefix. Revisit when agent memories are available or when the use case demands agent-scoped learning.
+
+### Decision 4: Process Intelligence — Memory for Patterns, Records for Logs
+
+**Decision:** Process intelligence *patterns* live in memory (lightweight, fast). Raw execution *logs* live in records (structured, queryable).
 
 | Data | Vehicle | Why |
 |------|---------|-----|
-| "Narrative → Behavioral averages 8.5 for blogs" | Agent memory | Pattern. Agents need this at session start. Fast lookup. |
+| "Narrative → Behavioral averages 8.5 for blogs" | Team memory (`cma.process.effectiveness`) | Pattern. Agents need this at session start. Fast lookup. |
 | "Session X used Narrative → Behavioral, produced score 8.7, user revised 2 times" | Record (optional) | Log entry. Useful for analytics but not needed at session start. |
 
 **For v1:** Implement memory patterns only. Raw execution logging is a future enhancement (record type: "Agent Execution Log").
 
-### Decision 4: Memory Expiration — Category-Based Rules
+### Decision 5: Memory Expiration — Category-Based Rules
 
 **Decision:**
 
@@ -112,14 +147,14 @@ These decisions resolve the open architecture questions from the exploration and
 |----------|------------|
 | `cma.user.context` | **Session-scoped.** Updated at the start of every session when user confirms brand. No automatic expiration, but always overwritten. |
 | `cma.user.preferences` | **Persistent.** Only updated when new patterns detected. Never expires — preferences are long-lived. |
-| `cma.team.standards` | **Persistent.** Only updated by admin/lead actions. |
-| `cma.team.patterns` | **Persistent with review.** Patterns can become stale. Include `last_validated` timestamp. Manual review quarterly. |
-| `cma.agent.effectiveness` | **Persistent with decay.** Include observation count. Patterns based on < 5 observations are weighted lower than patterns based on 50+. |
-| `cma.agent.learning` | **Persistent with pruning.** Anti-patterns and corrections that haven't been observed in 90 days are candidates for removal. |
+| `cma.team.defaults` | **Persistent.** Only updated by admin/lead actions. |
+| `cma.team.brand.{brand_id}` | **Persistent.** Only updated by admin/lead actions. |
+| `cma.process.effectiveness` | **Persistent with decay.** Include observation count. Patterns based on < 5 observations are weighted lower than patterns based on 50+. |
+| `cma.process.learning` | **Persistent with pruning.** Anti-patterns and corrections that haven't been observed in 90 days are candidates for removal. |
 
 **For v1:** Implement as persistent. Add `last_updated` timestamps to all memory objects. Expiration logic is a future enhancement.
 
-### Decision 5: Promotion Authority — Two Loops, Two Owners
+### Decision 6: Promotion Authority — Two Loops, Two Owners
 
 **Decision:** Memory evolution operates in two distinct loops with different authorities:
 
@@ -127,14 +162,14 @@ These decisions resolve the open architecture questions from the exploration and
 |-----------|-----------|-----------|
 | Session → User Memory | Automatic (agent) | Agent detects pattern (3+ occurrences) and stores |
 | User → Team Memory | Team admin (customer) | Admin reviews user patterns and promotes to team standard |
-| Pattern → Agent Memory | Automatic (post-scoring) | After content scoring, agent correlates process → outcome |
-| Agent Memory → Product Skill | CPO (product team) | CPO reviews cross-team aggregated patterns, decides skill updates |
+| Pattern → Process Memory | Automatic (post-scoring) | After content scoring, agent correlates process → outcome |
+| Process Memory → Product Skill | CPO (product team) | CPO reviews cross-team aggregated patterns, decides skill updates |
 
 **Within-team loop:** Team admin manages their brand-specific standards. Automated for user patterns, manual for team standards.
 
-**Cross-team loop:** CPO harvests process intelligence from aggregated, anonymized agent effectiveness data across all teams. Validated patterns become skill updates that ship to all teams via MCP. This is a product development decision, not a per-customer action.
+**Cross-team loop:** CPO harvests process intelligence from aggregated, anonymized process effectiveness data across all teams. Validated patterns become skill updates that ship to all teams via MCP. This is a product development decision, not a per-customer action.
 
-**For v1:** Session → User and Pattern → Agent are automated. Team promotion is manual (team admin). Cross-team product updates are manual (CPO-driven, quarterly review cycle).
+**For v1:** Session → User and Pattern → Process are automated. Team promotion is manual (team admin). Cross-team product updates are manual (CPO-driven, quarterly review cycle).
 
 ---
 
@@ -163,8 +198,8 @@ All CMA memories use the `cma.` prefix with dot-separated categories:
 - `cma.user.preferences` — Global workflow and content preferences
 - `cma.team.defaults` — Team-wide default standards (fallback)
 - `cma.team.brand.{brand_id}` — Brand-specific standards (quality, voice, specialists)
-- `cma.agent.effectiveness` — Specialist and process effectiveness data
-- `cma.agent.learning` — Corrections, revision patterns, anti-patterns
+- `cma.process.effectiveness` — Specialist and process effectiveness data
+- `cma.process.learning` — Corrections, revision patterns, anti-patterns
 
 ### Levels
 - **User:** Individual context and global preferences. Created/updated by agent.
@@ -297,10 +332,10 @@ Update the Content Creation Orchestrator's progressive loading protocol to integ
 | 1 | Start | Base framework loaded (includes Strategic Memory Protocol) |
 | 2 | Retrieve CMA Memories | Retrieve cma.user.context, cma.user.preferences, cma.team.standards, cma.team.patterns |
 | 3 | Brand ID | If cma.user.context.primary_brand_id exists, load brand directly. Otherwise, run brand-identification skill. |
-| 4 | Assets | Load foundation assets. If cma.agent.effectiveness.foundation_load_priorities exists, use it to determine which assets to load and in what order. Otherwise, load all foundation assets per strategic-asset-discovery skill. |
+| 4 | Assets | Load foundation assets. If cma.process.effectiveness.foundation_load_priorities exists, use it to determine which assets to load and in what order. Otherwise, load all foundation assets per strategic-asset-discovery skill. |
 | 5 | Type Selection | Present content type options. If cma.team.patterns.preferred_content_types exists, highlight those. |
 | 6 | Type Selected | Load content-type skill. If cma.user.preferences.workflow_mode exists, use it. Otherwise, follow dual-process-selection. |
-| 7 | Specialist Delegation | If cma.agent.effectiveness.specialist_value_by_content_type has data for this content type, prefer the recommended specialist sequence. Otherwise, follow specialist-integration skill defaults. |
+| 7 | Specialist Delegation | If cma.process.effectiveness.specialist_value_by_content_type has data for this content type, prefer the recommended specialist sequence. Otherwise, follow specialist-integration skill defaults. |
 | 8 | Creation | Execute. |
 | 9 | UIC Capture | Run strategic-intelligence-capture skill. |
 | 10 | QA + Save | Check cma.team.standards. Save with lineage. |
@@ -316,7 +351,7 @@ When the orchestrator delegates to specialists, memory informs the decision:
 ## Specialist Delegation (Memory-Informed)
 
 Before delegating to a specialist:
-1. Check cma.agent.effectiveness.specialist_value_by_content_type for the 
+1. Check cma.process.effectiveness.specialist_value_by_content_type for the 
    current content type.
 2. If data exists with 5+ observations:
    - Use the recommended specialist sequence
@@ -354,11 +389,11 @@ After a piece of content is created AND scored by the Strategic Asset Score agen
 
 | Data Point | Source | Stored In |
 |------------|--------|-----------|
-| Specialist sequence used | Orchestrator session log or `coordinating_agent_roles` from UIC metadata | `cma.agent.effectiveness` |
+| Specialist sequence used | Orchestrator session log or `coordinating_agent_roles` from UIC metadata | `cma.process.effectiveness` |
 | Final Strategic Asset Score | Strategic Asset Score record | Correlation with sequence |
-| Foundation assets referenced | `intelligence_assets_referenced` from UIC metadata | `cma.agent.effectiveness.foundation_load_priorities` |
-| User revision count | Session interaction count | `cma.agent.learning.avg_revisions_by_type` |
-| User correction types | Session interaction analysis | `cma.agent.learning.common_user_corrections` |
+| Foundation assets referenced | `intelligence_assets_referenced` from UIC metadata | `cma.process.effectiveness.foundation_load_priorities` |
+| User revision count | Session interaction count | `cma.process.learning.avg_revisions_by_type` |
+| User correction types | Session interaction analysis | `cma.process.learning.common_user_corrections` |
 
 #### C.2 How It Updates Memory
 
@@ -367,7 +402,7 @@ After a piece of content is created AND scored by the Strategic Asset Score agen
 ```
 1. Read the Strategic Asset Score for the content just created
 2. Read the UIC metadata (coordinating_agent_roles, intelligence_assets_referenced)
-3. Update cma.agent.effectiveness:
+3. Update cma.process.effectiveness:
    - specialist_sequence_outcomes: add this session's sequence → score data point
      {
        "content_type": "blog_post",
@@ -378,7 +413,7 @@ After a piece of content is created AND scored by the Strategic Asset Score agen
    - specialist_value_by_content_type: recalculate if enough observations
    - foundation_load_priorities: track which foundation combinations correlate
      with highest scores
-4. Update cma.agent.learning:
+4. Update cma.process.learning:
    - avg_revisions_by_type: rolling average
    - common_user_corrections: if correction type matches existing pattern,
      increment count; if new, add with count 1
@@ -389,7 +424,7 @@ After a piece of content is created AND scored by the Strategic Asset Score agen
 ```
 1. If user made corrections before approval:
    - Categorize correction types (tone, length, structure, messaging, etc.)
-   - Update cma.agent.learning.common_user_corrections
+   - Update cma.process.learning.common_user_corrections
 2. If user chose a workflow mode:
    - Check if this matches cma.user.preferences.workflow_mode
    - If different for 3+ sessions, update the preference
@@ -425,7 +460,7 @@ Don't act on thin data. Memory-informed decisions require minimum confidence:
 |-------------|-------------|------------|
 | Post-scoring memory update logic | Orchestrator or post-scoring process correlates execution → score → memory | Content Creation Orchestrator + Strategic Asset Score agent |
 | Post-approval preference detection | Detect correction and preference patterns after user approval | Content Creation Orchestrator |
-| Memory-informed specialist delegation | Orchestrator uses `cma.agent.effectiveness` data | Phase B + accumulated data |
+| Memory-informed specialist delegation | Orchestrator uses `cma.process.effectiveness` data | Phase B + accumulated data |
 | Observation threshold constants | Minimum counts before acting on memory data | Design decision (values above) |
 
 ---
@@ -511,16 +546,16 @@ Each team's admin manages standards through `cma.team.brand.{brand_id}` (per-bra
 
 #### D.2 Cross-Team Product Intelligence (CPO)
 
-This is the loop that turns StoryCycle Genie into a product that gets smarter with every customer. The CPO harvests process intelligence from aggregated, anonymized agent effectiveness data across all teams and converts validated patterns into product-level improvements.
+This is the loop that turns StoryCycle Genie into a product that gets smarter with every customer. The CPO harvests process intelligence from aggregated, anonymized process effectiveness data across all teams and converts validated patterns into product-level improvements.
 
 **What kinds of patterns become product intelligence:**
 
 | Pattern | How It's Observed | What It Becomes |
 |---------|-------------------|-----------------|
-| Specialist sequences that produce higher scores | `cma.agent.effectiveness.specialist_sequence_outcomes` aggregated across teams | Updated `specialist-integration.md` skill with optimized defaults |
-| Foundation loading priorities | `cma.agent.effectiveness.foundation_load_priorities` aggregated | Updated `strategic-asset-discovery.md` skill with better load order |
-| Anti-patterns | `cma.agent.learning.anti_patterns` consistent across teams | Warnings or guardrails in base framework or content-type skills |
-| Revision predictors | `cma.agent.learning.common_user_corrections` aggregated | Pre-adjustments in content-type skills (e.g., "users consistently want more professional tone — default higher") |
+| Specialist sequences that produce higher scores | `cma.process.effectiveness.specialist_sequence_outcomes` aggregated across teams | Updated `specialist-integration.md` skill with optimized defaults |
+| Foundation loading priorities | `cma.process.effectiveness.foundation_load_priorities` aggregated | Updated `strategic-asset-discovery.md` skill with better load order |
+| Anti-patterns | `cma.process.learning.anti_patterns` consistent across teams | Warnings or guardrails in base framework or content-type skills |
+| Revision predictors | `cma.process.learning.common_user_corrections` aggregated | Pre-adjustments in content-type skills (e.g., "users consistently want more professional tone — default higher") |
 | Workflow mode effectiveness | `cma.user.preferences.workflow_mode` correlated with scores across teams | Updated `dual-process-selection.md` skill confidence thresholds |
 | Content type best practices | High-scoring content patterns across teams | Enriched content-type skills with validated structural patterns |
 
@@ -537,7 +572,7 @@ This is the loop that turns StoryCycle Genie into a product that gets smarter wi
 Agent effectiveness and learning data accumulates per-team in account-scoped memories. To give the CPO cross-team visibility, build a **product analytics view** that aggregates this data across accounts.
 
 For v1 this can be simple — a periodic query or report that:
-- Pulls `cma.agent.effectiveness` and `cma.agent.learning` data across all accounts
+- Pulls `cma.process.effectiveness` and `cma.process.learning` data across all accounts
 - Strips team-identifying information (no brand names, no user IDs, no asset content)
 - Aggregates into pattern summaries
 
@@ -594,7 +629,7 @@ When the CPO validates a pattern, the update path is:
 **Step 4: Post-Deployment Monitoring**
 
 After a skill update ships:
-- Monitor agent effectiveness data across teams for the affected pattern
+- Monitor process effectiveness data across teams for the affected pattern
 - Confirm the expected improvement materializes (scores go up, revisions go down)
 - If scores degrade, revert the skill change
 - The data pipeline from Step 1 provides the monitoring for free — same aggregation, just looking at the trend after the change
@@ -603,7 +638,7 @@ After a skill update ships:
 
 End-to-end example of how a cross-team pattern becomes a product improvement:
 
-**Month 1-3:** Phase C accumulates data. Across 30+ teams, `cma.agent.effectiveness.specialist_sequence_outcomes` shows:
+**Month 1-3:** Phase C accumulates data. Across 30+ teams, `cma.process.effectiveness.specialist_sequence_outcomes` shows:
 - Blog posts with Narrative → Search: avg score 8.7 (600+ observations)
 - Blog posts with Narrative → Behavioral: avg score 8.1 (400+ observations)
 - Difference is consistent and statistically significant
@@ -627,7 +662,7 @@ Rationale: Cross-team data shows 12% higher Strategic Asset Scores
 with this sequence (1,000+ observations across 30+ teams).
 
 Override: If cma.team.standards.required_specialists or 
-cma.agent.effectiveness specifies a different sequence with 5+ 
+cma.process.effectiveness specifies a different sequence with 5+ 
 team-specific observations, use the team/agent override.
 ```
 
@@ -635,7 +670,7 @@ team-specific observations, use the team/agent override.
 
 **Monitoring:** Over the next 60 days, blog post scores across all teams trend up ~8%. CPO confirms the change was beneficial. The pattern is now governance — it lives in the skill, not in memory.
 
-**Key detail:** Teams that have their own `cma.team.standards.required_specialists` or enough team-specific agent effectiveness data can override the product default. The product default is the best starting point; team-specific intelligence takes precedence when it exists.
+**Key detail:** Teams that have their own `cma.team.standards.required_specialists` or enough team-specific process effectiveness data can override the product default. The product default is the best starting point; team-specific intelligence takes precedence when it exists.
 
 #### D.5 Relationship Between the Two Loops
 
@@ -645,7 +680,7 @@ The loops aren't independent — they interact:
 TEAM MEMORY (per-team)               PRODUCT SKILLS (all teams)
 cma.team.brand.{id}   ←──────────── Default values come from skills
 cma.team.defaults      ←──────────── (when no brand-specific standard)
-cma.agent.effectiveness ────────────→ Aggregated data informs CPO
+cma.process.effectiveness ────────────→ Aggregated data informs CPO
                                        ↓
                                   Skill updates ship via MCP
                                        ↓
@@ -655,7 +690,7 @@ cma.agent.effectiveness ────────────→ Aggregated data 
 **Precedence order when the agent makes a decision:**
 1. **Brand-specific team memory** (`cma.team.brand.{brand_id}`) — if the team has set standards for this brand, use them
 2. **Team defaults** (`cma.team.defaults`) — if no brand-specific standard, use team defaults
-3. **Agent effectiveness** (`cma.agent.effectiveness`) — if the team has enough local data (5+ observations), use it
+3. **Process effectiveness** (`cma.process.effectiveness`) — if the team has enough local data (5+ observations), use it
 4. **Skill defaults** — fall back to product-level defaults (which are informed by cross-team intelligence)
 
 This means:
@@ -669,12 +704,12 @@ This means:
 | Deliverable | Description | Owner | When |
 |-------------|-------------|-------|------|
 | **Within-team admin controls** | UI or agent workflow for team admin to set `cma.team.standards` | Engineering | With Phase A/B |
-| **Product analytics aggregation** | Query/report that aggregates agent effectiveness data across accounts (anonymized) | Engineering + CPO | After Phase C is running across multiple teams |
+| **Product analytics aggregation** | Query/report that aggregates process effectiveness data across accounts (anonymized) | Engineering + CPO | After Phase C is running across multiple teams |
 | **CPO review dashboard or report** | Cross-team pattern summaries (specialist effectiveness, anti-patterns, revision predictors) | Engineering + CPO | With product analytics |
 | **Validation criteria** | Documented thresholds for when a cross-team pattern warrants a skill update | CPO | With Phase D |
 | **Skill update workflow** | Process: CPO decision → engineering update → MCP test → deploy → monitor | CPO + Engineering | With Phase D |
-| **Post-deployment monitoring** | Confirm skill changes improve (or don't degrade) agent effectiveness data | CPO + Engineering | Ongoing |
-| **Override precedence logic** | Team memory > agent effectiveness > skill defaults, documented in base framework | Engineering | With Phase B |
+| **Post-deployment monitoring** | Confirm skill changes improve (or don't degrade) process effectiveness data | CPO + Engineering | Ongoing |
+| **Override precedence logic** | Team memory > process effectiveness > skill defaults, documented in base framework | Engineering | With Phase B |
 
 ---
 
@@ -686,7 +721,7 @@ This means:
 | **Phase 2: Base Framework** | Strategic Memory Protocol section in base | ~350 tokens in `storycycle-base-optimized.md` |
 | **Phase 4: Skills Extraction** | Ensure `strategic-asset-discovery` skill references memory shortcuts (cma.user.context.primary_brand_id) | Updated skill |
 | **Phase 5: Content-Type Skills** | No memory-specific changes needed — skills conform to base contract | — |
-| **Phase 6: Recomposition + MCP** | Recomposition skills retrieve `cma.agent.effectiveness.recomposition_success_rates` if available | Updated recomposition skills |
+| **Phase 6: Recomposition + MCP** | Recomposition skills retrieve `cma.process.effectiveness.recomposition_success_rates` if available | Updated recomposition skills |
 | **Phase 7: Orchestrator** | Memory-enhanced progressive loading; memory-informed specialist delegation; post-approval memory update | Updated orchestrator |
 | **Phase 9: Testing** | Test memory retrieval at session start; test creation triggers on brand confirmation and content approval; test that memory-informed specialist delegation works when data exists | Test scenarios |
 | **Phase 10: Deploy** | Deploy base with memory protocol; no separate memory deployment needed | — |
@@ -708,8 +743,8 @@ CMA memories use the `cma.` prefix with structured JSON objects:
 - `cma.user.preferences` (User) — workflow_mode, detail_level, option_presentation
 - `cma.team.defaults` (Team) — coherence_minimum, confidence_auto_approve, content_approval_required, required_specialists
 - `cma.team.brand.{brand_id}` (Team) — brand-specific: coherence_minimum, required_specialists, voice_standards, preferred_content_types, content_approval_required
-- `cma.agent.effectiveness` (Agent) — specialist_sequence_outcomes, specialist_value_by_content_type, foundation_load_priorities
-- `cma.agent.learning` (Agent) — common_user_corrections, avg_revisions_by_type, anti_patterns
+- `cma.process.effectiveness` (Team — system-accumulated) — specialist_sequence_outcomes, specialist_value_by_content_type, foundation_load_priorities
+- `cma.process.learning` (Team — system-accumulated) — common_user_corrections, avg_revisions_by_type, anti_patterns
 
 All memory values include `last_updated` timestamp.
 Team standards are brand-scoped to support agencies with multiple client brands.
@@ -734,7 +769,7 @@ Each brand has its own quality bar, voice, and specialist requirements.
 
 ### Retrieval: At Specialist Delegation
 Before connectedAgentRequest to specialists:
-- Retrieve `cma.agent.effectiveness` — If specialist_value_by_content_type has 
+- Retrieve `cma.process.effectiveness` — If specialist_value_by_content_type has 
   5+ observations for this content type, prefer the recommended sequence.
 - Pass cma.user.preferences and active brand voice_standards in specialist context.
 
@@ -767,8 +802,8 @@ After user approves content:
 ### Creation: After Content Scoring (Phase C)
 After Strategic Asset Score is computed for new content:
 - Correlate specialist sequence + foundation assets → score
-- Update `cma.agent.effectiveness` with new data point
-- Update `cma.agent.learning` with revision count and correction types
+- Update `cma.process.effectiveness` with new data point
+- Update `cma.process.learning` with revision count and correction types
 - Only act on accumulated data when observation count ≥ 5
 ```
 
@@ -798,8 +833,8 @@ After Strategic Asset Score is computed for new content:
 
 | Criterion | How to Verify |
 |-----------|--------------|
-| Post-scoring memory update fires | After content scoring, cma.agent.effectiveness is updated |
-| Specialist sequence recorded | Sequence + score pair stored in agent memory |
+| Post-scoring memory update fires | After content scoring, cma.process.effectiveness is updated |
+| Specialist sequence recorded | Sequence + score pair stored in process memory |
 | Memory-informed delegation works | With 5+ observations, orchestrator selects the recommended sequence |
 | Minimum observation thresholds enforced | With < 5 observations, orchestrator falls back to default behavior |
 
@@ -815,7 +850,7 @@ After Strategic Asset Score is computed for new content:
 
 | Criterion | How to Verify |
 |-----------|--------------|
-| Product analytics aggregation works | CPO can see anonymized, aggregated agent effectiveness data across teams |
+| Product analytics aggregation works | CPO can see anonymized, aggregated process effectiveness data across teams |
 | Cross-team pattern identified | At least one pattern validated across 10+ teams with statistical significance |
 | Skill update deployed via MCP | Updated skill serves to all teams on next load |
 | Post-deployment monitoring | Agent effectiveness data confirms improvement (or no degradation) after skill update |
