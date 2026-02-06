@@ -16,20 +16,20 @@ These decisions resolve the open architecture questions from the exploration and
 
 **Decision:** Store CMA memories as **one structured object per category**, not one memory item per individual key.
 
-**Rationale:** Each memory retrieval adds latency and token overhead. Grouping related values into a single object reduces retrieval calls from 10+ down to 3-4 while keeping categories cleanly separated.
+**Rationale:** Each memory retrieval adds latency and token overhead. Grouping related values into a single object reduces retrieval calls while keeping categories cleanly separated.
 
 **Structure:**
 
-| Memory Name | Level | Contains |
-|-------------|-------|----------|
-| `cma.user.context` | User | `primary_brand_id`, `primary_audience_ids`, `active_campaign_id` |
-| `cma.user.preferences` | User | `workflow_mode`, `detail_level`, `option_presentation`, `tone`, `content_length` |
-| `cma.team.standards` | Team | `default_brand_story_id`, `default_audience_story_ids`, `coherence_minimum`, `confidence_auto_approve`, `content_approval_required`, `required_specialists` |
-| `cma.team.patterns` | Team | `preferred_content_types`, `successful_content_patterns`, `brand_voice_standards` |
-| `cma.agent.effectiveness` | Agent | `specialist_sequence_outcomes`, `specialist_value_by_content_type`, `foundation_load_priorities` |
-| `cma.agent.learning` | Agent | `common_user_corrections`, `avg_revisions_by_type`, `high_value_creation_sequences`, `anti_patterns` |
+| Memory Name | Level | Scope | Contains |
+|-------------|-------|-------|----------|
+| `cma.user.context` | User | Global | `primary_brand_id`, `primary_audience_ids`, `active_campaign_id` |
+| `cma.user.preferences` | User | Global | `workflow_mode`, `detail_level`, `option_presentation` |
+| `cma.team.defaults` | Team | Global | `coherence_minimum`, `confidence_auto_approve`, `content_approval_required`, `required_specialists` — fallback when no brand-specific standards exist |
+| `cma.team.brand.{brand_id}` | Team | Per-brand | `coherence_minimum`, `required_specialists`, `voice_standards`, `preferred_content_types`, `content_approval_required` — standards for this specific brand |
+| `cma.agent.effectiveness` | Agent | Global | `specialist_sequence_outcomes`, `specialist_value_by_content_type`, `foundation_load_priorities` |
+| `cma.agent.learning` | Agent | Global | `common_user_corrections`, `avg_revisions_by_type`, `high_value_creation_sequences`, `anti_patterns` |
 
-**Example memory item:**
+**Example — user context:**
 ```json
 {
   "name": "cma.user.context",
@@ -37,20 +37,61 @@ These decisions resolve the open architecture questions from the exploration and
   "value": {
     "primary_brand_id": "abc-123",
     "primary_audience_ids": ["def-456", "ghi-789"],
-    "active_campaign_id": null
+    "active_campaign_id": null,
+    "last_updated": "2026-02-06T12:00:00Z"
   }
 }
 ```
 
-**Impact on retrieval:** At session start, the agent calls retrieve for `cma.user.*` and `cma.team.*` — 4 retrievals total instead of 15+.
+**Example — brand-specific team standards (agency with multiple clients):**
+```json
+{
+  "name": "cma.team.brand.abc-123",
+  "level": "team",
+  "value": {
+    "coherence_minimum": 8.5,
+    "required_specialists": ["narrative", "search"],
+    "voice_standards": { "tone": "conversational_authority", "complexity": "technical" },
+    "preferred_content_types": ["blog_post", "case_study", "whitepaper"],
+    "content_approval_required": true,
+    "last_updated": "2026-02-06T12:00:00Z"
+  }
+}
+```
 
-### Decision 2: Multi-Brand Scoping — Brand ID in Context, Not in Key Names
+**Impact on retrieval:** At session start, the agent retrieves `cma.user.context`, `cma.user.preferences`, and `cma.team.defaults` (3 calls). After brand is confirmed, one additional retrieval for `cma.team.brand.{brand_id}`. Still 4 retrievals total, but the last one is brand-aware.
 
-**Decision:** Use `cma.user.context.primary_brand_id` to scope other memories, not `cma.brand.{id}.preferences.*`.
+### Decision 2: Multi-Brand Scoping — Brand-Specific Team Standards
 
-**Rationale:** Most users work with one brand at a time. The context memory already captures which brand is active. Agent behavior adjusts based on context, not by loading brand-specific memory trees. If a user switches brands, the context memory updates and the agent adjusts.
+**Decision:** Team standards are **per-brand** via `cma.team.brand.{brand_id}`, with `cma.team.defaults` as the fallback. User preferences are **global** (they describe how the user works, not how the brand works).
 
-**Exception:** If a user works across brands *within a single session* regularly, we revisit this. For v1, single-brand-per-session is the expected pattern.
+**Rationale:** StoryCycle Genie is used by agencies that manage multiple brands. An agency's quality bar, voice standards, required specialists, and preferred content types differ by client. A flat `cma.team.standards` would force one set of standards across all brands, which doesn't match how agencies work.
+
+**How it works for different account types:**
+
+| Account Type | How Brand-Scoping Works |
+|-------------|-------------------------|
+| **Single-brand team** (e.g., in-house marketing) | One `cma.team.brand.{brand_id}` memory for their brand. `cma.team.defaults` may not even be set — the brand-specific memory is the standard. Functionally identical to the old flat model. |
+| **Agency with multiple brands** | One `cma.team.brand.{brand_id}` per client brand. `cma.team.defaults` holds the agency's baseline standards. When a user switches brands, the agent loads that brand's standards. Each client gets its own quality bar, voice, and specialist requirements. |
+| **New brand (no standards yet)** | No `cma.team.brand.{brand_id}` exists. Agent falls through to `cma.team.defaults`. If that's also empty, falls through to skill defaults. Standards accumulate as the team works with this brand. |
+
+**What's global vs. brand-specific:**
+
+| Memory | Scope | Why |
+|--------|-------|-----|
+| `cma.user.preferences` (workflow_mode, detail_level, option_presentation) | **Global per user** | These describe how the person works. An agency creative's preference for step-by-step vs. automated doesn't change by client. |
+| `cma.user.context` (primary_brand_id, audiences, campaign) | **Session context** | Updates when user switches brands. Points to the active brand. |
+| `cma.team.brand.{brand_id}` (quality bar, voice, specialists, content types) | **Per brand** | These describe how work for this brand should be done. An agency has different standards per client. |
+| `cma.team.defaults` (baseline quality, approval policy) | **Team-wide fallback** | The agency's baseline that applies when no brand-specific standard is set. |
+| `cma.agent.effectiveness`, `cma.agent.learning` | **Global (process intelligence)** | "Narrative → Search is best for blogs" is true regardless of brand. Process intelligence is brand-agnostic. |
+
+**Brand switching flow for an agency user:**
+1. User is working on Brand X. `cma.user.context.primary_brand_id` = Brand X.
+2. Agent loaded `cma.team.brand.{brand_x_id}` — quality bar 8.5, conversational authority voice.
+3. User says "Let's switch to Brand Y."
+4. Agent updates `cma.user.context.primary_brand_id` to Brand Y.
+5. Agent retrieves `cma.team.brand.{brand_y_id}` — quality bar 7.5, friendly approachable voice.
+6. Session continues with Brand Y's standards. No confusion, no bleed between brands.
 
 ### Decision 3: Process Intelligence — Memory for Patterns, Records for Logs
 
@@ -118,29 +159,48 @@ Content:
 
 ### Naming
 All CMA memories use the `cma.` prefix with dot-separated categories:
-- `cma.user.context` — Working context (brand, audiences, campaign)
-- `cma.user.preferences` — Workflow and content preferences
-- `cma.team.standards` — Quality thresholds and policies
-- `cma.team.patterns` — Organizational patterns and voice standards
+- `cma.user.context` — Working context (active brand, audiences, campaign)
+- `cma.user.preferences` — Global workflow and content preferences
+- `cma.team.defaults` — Team-wide default standards (fallback)
+- `cma.team.brand.{brand_id}` — Brand-specific standards (quality, voice, specialists)
 - `cma.agent.effectiveness` — Specialist and process effectiveness data
 - `cma.agent.learning` — Corrections, revision patterns, anti-patterns
 
 ### Levels
-- **User:** Individual context and preferences. Created/updated by agent.
-- **Team:** Organizational standards and patterns. Standards set by admin; 
-  patterns promoted from user observations.
-- **Agent:** Process intelligence. Updated automatically after content scoring.
+- **User:** Individual context and global preferences. Created/updated by agent.
+- **Team:** Brand-specific standards and team-wide defaults. Set by team admin.
+  Brand-scoped via `cma.team.brand.{brand_id}` for agencies with multiple clients.
+- **Agent:** Process intelligence (brand-agnostic). Updated automatically after 
+  content scoring.
+
+### Brand Scoping
+Team standards are per-brand. When a user works on Brand X, the agent loads
+`cma.team.brand.{brand_x_id}`. If no brand-specific standards exist, falls
+through to `cma.team.defaults`. This supports agencies managing multiple
+client brands with different quality bars, voice standards, and specialist
+requirements.
 
 ### Values
 All CMA memories store structured JSON objects, not single values.
 Always include `last_updated` timestamp in the value.
 
-Example:
+Example (user context):
   name: "cma.user.context"
   value: {
     "primary_brand_id": "abc-123",
     "primary_audience_ids": ["def-456"],
     "active_campaign_id": null,
+    "last_updated": "2026-02-06T12:00:00Z"
+  }
+
+Example (brand-specific team standards):
+  name: "cma.team.brand.abc-123"
+  value: {
+    "coherence_minimum": 8.5,
+    "required_specialists": ["narrative", "search"],
+    "voice_standards": {"tone": "conversational_authority"},
+    "preferred_content_types": ["blog_post", "case_study"],
+    "content_approval_required": true,
     "last_updated": "2026-02-06T12:00:00Z"
   }
 ```
@@ -160,20 +220,33 @@ Content:
 Before starting any content work, retrieve CMA memories:
 
 1. Call retrieve for "cma.user.context" — get primary brand, audiences, campaign
-2. Call retrieve for "cma.user.preferences" — get workflow mode, detail level, tone
-3. Call retrieve for "cma.team.standards" — get coherence minimum, approval policy
-4. Call retrieve for "cma.team.patterns" — get preferred content types, voice standards
+2. Call retrieve for "cma.user.preferences" — get workflow mode, detail level
 
 If cma.user.context has a primary_brand_id, use it to load the brand story 
 directly (skip brand search). If no user context exists, fall through to 
 brand identification protocol.
 
-If cma.team.standards has a coherence_minimum, use it as the quality bar for 
-this session. Default: 8.0.
-
 If cma.user.preferences has a workflow_mode, use it to set the initial 
 interaction mode (step-by-step vs automated). Default: follow 
 dual-process-selection confidence logic.
+
+### After Brand Confirmed (Retrieval)
+Once primary_brand_id is known (from context or brand identification):
+
+3. Call retrieve for "cma.team.brand.{primary_brand_id}" — brand-specific 
+   standards (quality bar, voice, specialists, content types)
+4. Call retrieve for "cma.team.defaults" — team-wide fallback standards
+
+For each setting, apply brand-specific value if set, otherwise team default,
+otherwise skill default. This supports agencies with per-client standards
+and single-brand teams equally.
+
+### At Brand Switch (Retrieval + Creation)
+When user switches to a different brand mid-session:
+- Update cma.user.context with new primary_brand_id and audiences
+- Retrieve cma.team.brand.{new_brand_id} for the new brand's standards
+- Apply new standards for the remainder of the session
+- No bleed between brands
 
 ### At Brand Confirmation (Creation)
 When user confirms or selects a brand:
@@ -190,9 +263,9 @@ When user approves final content:
   across sessions), update cma.user.preferences with the implicit preference.
 
 ### At QA Gate (Retrieval)
-Before content save, re-check:
-- cma.team.standards.content_approval_required — enforce if true
-- cma.team.standards.coherence_minimum — flag if content likely below bar
+Before content save, re-check active brand standards (already in context):
+- content_approval_required — enforce if true
+- coherence_minimum — flag if content likely below bar
 ```
 
 #### A.3 Deliverables Summary
@@ -412,22 +485,29 @@ LOOP 2: CROSS-TEAM → PRODUCT (CPO harvests patterns into skills)
 
 #### D.1 Within-Team Evolution (Team Admin)
 
-Each team's admin manages their team's standards through `cma.team.standards` and `cma.team.patterns`. This is straightforward and works within Brightsy's existing account-scoped architecture.
+Each team's admin manages standards through `cma.team.brand.{brand_id}` (per-brand) and `cma.team.defaults` (team-wide fallback). This supports both single-brand in-house teams and agencies managing multiple client brands.
 
-**What team admins control:**
-- `cma.team.standards.coherence_minimum` — their quality bar
-- `cma.team.standards.content_approval_required` — their approval policy
-- `cma.team.standards.required_specialists` — which specialists their content needs
-- `cma.team.patterns.brand_voice_standards` — their voice
-- `cma.team.patterns.preferred_content_types` — what they create most
+**What team admins control per brand (`cma.team.brand.{brand_id}`):**
+- `coherence_minimum` — quality bar for this brand
+- `content_approval_required` — approval policy for this brand
+- `required_specialists` — which specialists this brand's content needs
+- `voice_standards` — this brand's voice (tone, complexity, style)
+- `preferred_content_types` — what they create most for this brand
 
-**How it works:**
-1. Phase C accumulates user-level patterns within the team
-2. Team admin can see user patterns (which users prefer what, what works best for their brand)
-3. Team admin promotes validated patterns to `cma.team.*` — e.g., setting the team quality bar, establishing required specialists
-4. These team memories affect all users on that team from the next session
+**What team admins control as defaults (`cma.team.defaults`):**
+- Baseline `coherence_minimum`, `content_approval_required`, `required_specialists`
+- These apply when a brand has no specific standards yet
 
-**This loop is self-contained within each account.** No cross-team visibility needed. No product team involvement. The team admin is the authority on their brand's standards.
+**How it works for a single-brand team:**
+- One `cma.team.brand.{brand_id}` for their brand. Functionally identical to the previous flat model.
+
+**How it works for an agency with multiple brands:**
+1. Admin sets brand-specific standards for each client: "Client A: quality 8.5, requires Narrative + Search, conversational authority voice. Client B: quality 7.5, requires Narrative only, friendly approachable voice."
+2. When a user works on Client A, the agent loads Client A's standards. When they switch to Client B, Client B's standards load. No bleed between brands.
+3. Agency sets `cma.team.defaults` as the baseline for new clients that don't have specific standards yet.
+4. As the team accumulates Phase C data for a new client, the admin can review patterns and set brand-specific standards for that client.
+
+**This loop is self-contained within each account.** No cross-team visibility needed. No product team involvement. The team admin is the authority on their brands' standards.
 
 #### D.2 Cross-Team Product Intelligence (CPO)
 
@@ -562,24 +642,26 @@ team-specific observations, use the team/agent override.
 The loops aren't independent — they interact:
 
 ```
-TEAM MEMORY (per-team)        PRODUCT SKILLS (all teams)
-cma.team.standards     ←───── Default values come from skills
-cma.agent.effectiveness ────→ Aggregated data informs CPO
-                               ↓
-                          Skill updates ship via MCP
-                               ↓
-                          New defaults ←───── Override by team memory
+TEAM MEMORY (per-team)               PRODUCT SKILLS (all teams)
+cma.team.brand.{id}   ←──────────── Default values come from skills
+cma.team.defaults      ←──────────── (when no brand-specific standard)
+cma.agent.effectiveness ────────────→ Aggregated data informs CPO
+                                       ↓
+                                  Skill updates ship via MCP
+                                       ↓
+                                  New defaults ←── Override by brand memory
 ```
 
 **Precedence order when the agent makes a decision:**
-1. **Team memory** (`cma.team.standards`, `cma.team.patterns`) — if the team has set a specific standard, use it
-2. **Agent effectiveness** (`cma.agent.effectiveness`) — if the team has enough local data (5+ observations), use it
-3. **Skill defaults** — fall back to product-level defaults (which are informed by cross-team intelligence)
+1. **Brand-specific team memory** (`cma.team.brand.{brand_id}`) — if the team has set standards for this brand, use them
+2. **Team defaults** (`cma.team.defaults`) — if no brand-specific standard, use team defaults
+3. **Agent effectiveness** (`cma.agent.effectiveness`) — if the team has enough local data (5+ observations), use it
+4. **Skill defaults** — fall back to product-level defaults (which are informed by cross-team intelligence)
 
 This means:
 - A new team gets the best defaults from day one (product intelligence)
 - As the team accumulates its own data, the system adapts to their specific patterns
-- The team admin can always override with explicit standards
+- The team admin can set standards per brand (agencies) or one set of standards (single-brand teams)
 - The product keeps getting smarter as more teams contribute to the aggregate
 
 #### D.6 Deliverables Summary
@@ -623,43 +705,57 @@ This is the exact section to include in `storycycle-base-optimized.md`. It repla
 ### Memory Conventions
 CMA memories use the `cma.` prefix with structured JSON objects:
 - `cma.user.context` (User) — primary_brand_id, primary_audience_ids, active_campaign_id
-- `cma.user.preferences` (User) — workflow_mode, detail_level, tone, content_length
-- `cma.team.standards` (Team) — coherence_minimum, confidence_auto_approve, content_approval_required, required_specialists
-- `cma.team.patterns` (Team) — preferred_content_types, brand_voice_standards
+- `cma.user.preferences` (User) — workflow_mode, detail_level, option_presentation
+- `cma.team.defaults` (Team) — coherence_minimum, confidence_auto_approve, content_approval_required, required_specialists
+- `cma.team.brand.{brand_id}` (Team) — brand-specific: coherence_minimum, required_specialists, voice_standards, preferred_content_types, content_approval_required
 - `cma.agent.effectiveness` (Agent) — specialist_sequence_outcomes, specialist_value_by_content_type, foundation_load_priorities
 - `cma.agent.learning` (Agent) — common_user_corrections, avg_revisions_by_type, anti_patterns
 
 All memory values include `last_updated` timestamp.
+Team standards are brand-scoped to support agencies with multiple client brands.
 
 ### Retrieval: At Session Start
 Before any content work:
 1. Retrieve `cma.user.context` — If primary_brand_id exists, load brand story 
    directly (skip brand search). Otherwise, proceed to brand identification.
 2. Retrieve `cma.user.preferences` — Apply workflow_mode if set (overrides 
-   dual-process-selection default). Apply tone/detail preferences to generation.
-3. Retrieve `cma.team.standards` — Use coherence_minimum as quality bar 
-   (default 8.0 if not set). Enforce content_approval_required if true. 
-   Note required_specialists for delegation.
-4. Retrieve `cma.team.patterns` — Highlight preferred_content_types in type 
-   selection. Apply brand_voice_standards to generation.
+   dual-process-selection default). Apply detail/option preferences.
 
-If any retrieval returns empty, use defaults and proceed.
+### Retrieval: After Brand Confirmed
+Once primary_brand_id is known (from cma.user.context or brand identification):
+3. Retrieve `cma.team.brand.{primary_brand_id}` — brand-specific standards.
+4. Retrieve `cma.team.defaults` — team-wide fallback standards.
+5. Apply brand standards with fallback: for each setting (coherence_minimum, 
+   required_specialists, voice_standards, content_approval_required), use 
+   brand-specific value if set, otherwise team default, otherwise skill default.
+
+This brand-scoped retrieval supports agencies managing multiple client brands.
+Each brand has its own quality bar, voice, and specialist requirements.
 
 ### Retrieval: At Specialist Delegation
 Before connectedAgentRequest to specialists:
 - Retrieve `cma.agent.effectiveness` — If specialist_value_by_content_type has 
   5+ observations for this content type, prefer the recommended sequence.
-- Pass cma.user.preferences (tone, detail_level) in specialist context.
+- Pass cma.user.preferences and active brand voice_standards in specialist context.
 
 ### Retrieval: At QA Gate
-Before content save:
-- Re-check cma.team.standards.content_approval_required
-- Re-check cma.team.standards.coherence_minimum
+Before content save, re-check the active brand standards (already in context 
+from post-brand retrieval):
+- content_approval_required
+- coherence_minimum
 
 ### Creation: At Brand Confirmation
 When user confirms or selects a brand:
 - Remember `cma.user.context` with updated primary_brand_id, 
   primary_audience_ids (from brand's associated audiences), last_updated.
+- This is the trigger to retrieve brand-specific team standards.
+
+### Creation: At Brand Switch
+When user switches to a different brand mid-session:
+- Update `cma.user.context` with new primary_brand_id and audiences.
+- Retrieve `cma.team.brand.{new_brand_id}` to load the new brand's standards.
+- Apply new brand standards for the remainder of the session.
+- No bleed between brands — each brand's context is cleanly loaded.
 
 ### Creation: At Content Approval
 After user approves content:
@@ -731,24 +827,34 @@ After Strategic Asset Score is computed for new content:
 
 When all phases are implemented, strategic memory utilization delivers two compounding intelligence loops:
 
-**Loop 1 — Within a team:**
+**Loop 1 — Within a team (agency with multiple brands):**
 
 ```
-Session 1:  Agent uses product defaults. User corrects tone. Score: 7.8.
-            → Stores: user worked with Brand X, correction type = tone
+Session 1:  Agency user works on Client A. Agent uses product defaults. 
+            User corrects tone. Score: 7.8.
+            → Stores: user context = Client A, correction type = tone
 
-Session 5:  Agent retrieves Brand X directly (no search). Applies tone 
-            preference. Fewer corrections. Score: 8.2.
+Session 5:  User works on Client A again. Agent retrieves Client A 
+            directly. Applies tone preference. Fewer corrections. Score: 8.2.
             → Stores: Narrative specialist improved blog score
 
-Session 15: Agent uses preferred specialist sequence for blogs. 
-            Loads optimal foundation assets. Pre-adjusts for tone.
-            Zero corrections. Score: 8.9.
-            → Stores: high-value creation sequence identified
+Session 8:  User switches to Client B. Agent loads Client B's brand story
+            and audiences. No brand-specific standards yet for Client B, 
+            so team defaults apply. Score: 7.9.
+            → Stores: user context = Client B
 
-Session 30: Team admin sets quality bar to 8.5 and requires Narrative 
-            specialist for all blogs. All team members get these defaults.
-            Team average: 8.6 (up from 7.9 baseline).
+Session 15: Admin sets Client A standards: quality 8.5, requires Narrative 
+            + Search, conversational authority voice. Sets Client B 
+            standards: quality 7.5, requires Narrative, friendly voice.
+            Each client now has its own quality bar and voice.
+
+Session 25: User works on Client A. Agent loads Client A's standards 
+            automatically. Uses preferred specialist sequence. Pre-adjusts
+            for conversational authority tone. Zero corrections. Score: 8.9.
+            
+            Same afternoon, user switches to Client B. Agent loads Client 
+            B's standards. Different voice, different quality bar. No bleed
+            between brands. Score: 8.1.
 ```
 
 **Loop 2 — Across all teams into the product:**
@@ -773,11 +879,12 @@ Month 8:   CPO reviews again. Blog scores across all teams are up 8%
            ship based on cross-team patterns.
 ```
 
-**Two forms of Return on Intelligence:**
-- **Per-team ROI** — Each team's system gets smarter with every session. Their brand intelligence, their preferences, their quality bar.
-- **Product ROI** — The product gets smarter with every team. Process intelligence compounds across the entire customer base. New teams start with the accumulated wisdom of all teams before them.
+**Three forms of Return on Intelligence:**
+- **Per-brand ROI** — Each brand within a team gets smarter with every session. An agency's Client A gets better defaults, better specialist sequences, better quality — independent of Client B.
+- **Per-team ROI** — The agency's overall process intelligence accumulates. Their team defaults improve. New clients they onboard benefit from patterns learned across all their brands.
+- **Product ROI** — The product gets smarter with every team. Process intelligence compounds across the entire customer base. A new agency signing up today gets optimized specialist sequences from their first session — accumulated from hundreds of teams and thousands of content creation sessions.
 
-The second loop is what makes this a SaaS advantage. Every customer makes the product better for every other customer — without sharing any brand-specific data.
+The product loop is what makes this a SaaS advantage. Every customer makes the product better for every other customer — without sharing any brand-specific data. And brand-scoped memory means agencies can manage ten clients as cleanly as a single-brand team manages one.
 
 ---
 
