@@ -1074,6 +1074,9 @@ create_plan({
 - [ultra-intelligent-content-tech-implementation.md](../ultra-intelligent-content/ultra-intelligent-content-tech-implementation.md) — Semantic schema requirements
 - [ultra-intelligent-content-semantic-schema-framework.md](../ultra-intelligent-content/ultra-intelligent-content-semantic-schema-framework.md) — Full schema details, Brightsy two-tier
 
+**Strategic Memory (implementation plan):**
+- [strategic-memory-implementation-plan.md](../strategic-memory-implementation-plan.md) — Practical plan for Phases 1/2 memory conventions, orchestrator integration, agent execution intelligence, and evolution framework. Provides the specific content for the "Memory conventions" deliverable in Phase 1 and the "Add memory conventions" step in Phase 2.
+
 **Design history (superseded by this doc; archived):**
 - [storycycle-genie-token-optimization-plan.md](../../archive/storycycle-genie-token-optimization-plan.md) — Original token optimization plan (archived)
 - [storycycle-genie-complete-vision-extension.md](../../archive/storycycle-genie-complete-vision-extension.md) — UIC capture, recomposition, memory, lineage extension (archived)

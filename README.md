@@ -13,6 +13,7 @@ Documentation and reference for the Cognitive Mesh Architecture and related syst
 | **Narrative and business case** | [docs/thought-leadership/cma-whitepaper.md](docs/thought-leadership/cma-whitepaper.md) |
 | **Implementing CMA in Brightsy** | [docs/implementation/cma+brightsy-implementation-plan.md](docs/implementation/cma+brightsy-implementation-plan.md) |
 | **StoryCycle Genie implementation** | [docs/implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md](docs/implementation/storycycle-genie/storycycle-genie-v2-executable-vision.md) |
+| **Strategic Memory implementation** | [docs/implementation/strategic-memory-implementation-plan.md](docs/implementation/strategic-memory-implementation-plan.md) |
 
 ---
 
@@ -21,7 +22,7 @@ Documentation and reference for the Cognitive Mesh Architecture and related syst
 | Path | Purpose |
 |------|---------|
 | [docs/spec/](docs/spec/) | **Source of truth:** authoritative reference, technical spec |
-| [docs/implementation/](docs/implementation/) | Brightsy plan, StoryCycle Genie, Ultra-Intelligent Content (extended narrative) |
+| [docs/implementation/](docs/implementation/) | Brightsy plan, StoryCycle Genie, Ultra-Intelligent Content (extended narrative), Strategic Memory |
 | [docs/thought-leadership/](docs/thought-leadership/) | Whitepaper, use cases (construction, healthcare, legal), IP guidelines, PDF |
 | [docs/research/](docs/research/) | Industry and background research; alignment with CMA/UIC |
 | [docs/archive/](docs/archive/) | Superseded StoryCycle Genie docs (design history) |
